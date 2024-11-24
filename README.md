@@ -1,4 +1,4 @@
-# MICounselorAgent
+# CAMI: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration
 Official Implementation of Motivational Interviewing Counselor Agent for Paper [CAMI: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration]().
 
 ## Introduction
