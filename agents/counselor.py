@@ -10,13 +10,23 @@ from openai.types.chat.completion_create_params import ResponseFormatJSONObject
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
 
-openai_client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_BASE_URL
+openai_client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
+
+
+@backoff.on_exception(
+    backoff.expo,
+    (
+        openai.RateLimitError,
+        openai.Timeout,
+        openai.APIError,
+        openai.APIConnectionError,
+        openai.APIStatusError,
+        openai.InternalServerError,
+    ),
 )
-
-@backoff.on_exception(backoff.expo, (openai.RateLimitError, openai.Timeout, openai.APIError, openai.APIConnectionError, openai.APIStatusError, openai.InternalServerError))
-def get_chatbot_response(messages, model="gpt-4o-mini", temperature=0.7, top_p=0.8, max_tokens=150):
+def get_chatbot_response(
+    messages, model="gpt-4o-mini", temperature=0.7, top_p=0.8, max_tokens=150
+):
     message = openai_client.chat.completions.create(
         model=model,
         messages=messages,
@@ -27,8 +37,20 @@ def get_chatbot_response(messages, model="gpt-4o-mini", temperature=0.7, top_p=0
     return message.choices[0].message.content
 
 
-@backoff.on_exception(backoff.expo, (openai.RateLimitError, openai.Timeout, openai.APIError, openai.APIConnectionError, openai.APIStatusError, openai.InternalServerError))
-def get_precise_response(messages, model="gpt-4o-mini", temperature=0.2, top_p=0.1, max_tokens=150):
+@backoff.on_exception(
+    backoff.expo,
+    (
+        openai.RateLimitError,
+        openai.Timeout,
+        openai.APIError,
+        openai.APIConnectionError,
+        openai.APIStatusError,
+        openai.InternalServerError,
+    ),
+)
+def get_precise_response(
+    messages, model="gpt-4o-mini", temperature=0.2, top_p=0.1, max_tokens=150
+):
     message = openai_client.chat.completions.create(
         model=model,
         messages=messages,
@@ -37,10 +59,22 @@ def get_precise_response(messages, model="gpt-4o-mini", temperature=0.2, top_p=0
         max_tokens=max_tokens,
     )
     return message.choices[0].message.content
-    
 
-@backoff.on_exception(backoff.expo, (openai.RateLimitError, openai.Timeout, openai.APIError, openai.APIConnectionError, openai.APIStatusError, openai.InternalServerError))
-def get_json_response(messages, model="gpt-4o-mini", temperature=0.2, top_p=0.1, max_tokens=150):
+
+@backoff.on_exception(
+    backoff.expo,
+    (
+        openai.RateLimitError,
+        openai.Timeout,
+        openai.APIError,
+        openai.APIConnectionError,
+        openai.APIStatusError,
+        openai.InternalServerError,
+    ),
+)
+def get_json_response(
+    messages, model="gpt-4o-mini", temperature=0.2, top_p=0.1, max_tokens=150
+):
     format = ResponseFormatJSONObject()
     message = openai_client.chat.completions.create(
         model=model,
@@ -48,20 +82,17 @@ def get_json_response(messages, model="gpt-4o-mini", temperature=0.2, top_p=0.1,
         temperature=temperature,
         top_p=top_p,
         max_tokens=max_tokens,
-        response_format=format
+        response_format=format,
     )
     return message.choices[0].message.content
 
 
 class CAMI:
-    def __init__(self,
-                 goal,
-                 behavior,
-                 model):
+    def __init__(self, goal, behavior, model):
         self.state2instruction = {
             "Precontemplation": "The Client does not recognize their behavior as problematic and is not considering change.",
             "Contemplation": "The Client acknowledges the problematic nature of their behavior but is ambivalent about change.",
-            "Preparation": "The Client is ready to take action and is considering steps towards change."
+            "Preparation": "The Client is ready to take action and is considering steps towards change.",
         }
         system_prompt = f"""## Instruction
 You will act as a skilled counselor conducting a Motivational Interviewing (MI) session aimed at achieving {goal} related to the client's behavior, {behavior}. Your task is to help the client discover their inherent motivation to change and identify a tangible plan to change. Start the conversation with the client with some initial rapport building, such as asking, How are you? (e.g., develop mutual trust, friendship, and affinity with the client) before smoothly transitioning to asking about their problematic behavior. Keep the session under 40 turns and each response under 150 characters long. Use the MI principles and techniques described in the Knowledge Base – Motivational Interviewing (MI) context section below. However, these MI principles and techniques are only for you to use to help the user. These principles and techniques, as well as motivational interviewing, should NEVER be mentioned to the user. In each turn, a specific topic will be provided in square brackets after the client's utterance. Guide the conversation toward that topic, ensuring the session explores relevant aspects of the client’s situation and motivation. This will help you tailor your approach to the specific context and steer the counseling toward meaningful insights and actions.
@@ -145,7 +176,7 @@ At the core of MI are a few basic principles, including expressing empathy and d
             "Exam": f"You can explore how {behavior} negatively impacts exam preparation and performance, leading to lower grades. You can also highlight how {goal} improves study habits and exam results.",
             "Scholarship": f"You can explore how {behavior} affects eligibility for scholarships, reducing academic opportunities. You can also emphasize how {goal} improves academic performance and increases scholarship chances.",
             "Diseases": f"You can explore how {behavior} increases the risk of various diseases, including infections, chronic conditions, and respiratory issues. You can also discuss how {goal} can reduce these risks and support better long-term health. This includes subtopics like infections, hypertension, flu, inflammation, liver disease, lung cancer, chronic obstructive pulmonary disease (COPD), asthma, stroke, and diabetes.",
-            "Physical Fitness": f"You can explore the negative effects of {behavior} on physical fitness, such as decreased physical activity, loss of strength, and reduced flexibility. You can also discuss how {goal} contributes to better fitness levels, including improvements in endurance, strength, and flexibility.",
+            "Fitness": f"You can explore the negative effects of {behavior} on fitness, such as decreased physical activity, loss of strength, and reduced flexibility. You can also discuss how {goal} contributes to better fitness levels, including improvements in endurance, strength, and flexibility.",
             "Health Care": f"You can explore how {behavior} affects personal healthcare, such as oral hygiene, independent living, and overall appearance. You can also discuss the positive impact of {goal} in maintaining better health care practices and improving quality of life. Subtopics include dentistry, caregiver burden, independent living, and human appearance.",
             "Mental Disorders": f"You can explore how {behavior} may contribute to or worsen mental health conditions such as depression, anxiety, and cognitive decline. You can also discuss the benefits of {goal} in managing mental health and improving emotional well-being. Subtopics include depression, chronodisruption, anxiety disorders, and cognitive decline.",
             "Sexual Health": f"You can explore how {behavior} increases risks related to sexual and reproductive health, such as unsafe sex practices, maternal health complications, and birth defects. You can also discuss how {goal} supports healthier sexual practices and reduces the risk of complications. Subtopics include safe sex, maternal health, preterm birth, miscarriage, and birth defects.",
@@ -162,13 +193,15 @@ At the core of MI are a few basic principles, including expressing empathy and d
             "Economy": f"You can explore how {behavior} affects your client's financial situation, such as through reduced productivity, increased absenteeism, or poor financial management. You can also discuss how {goal} helps improve economic stability and workplace performance.",
             "Interpersonal Relationships": f"You can explore how {behavior} affects your client’s personal relationships, leading to family strain or issues with parenting. You can also discuss how {goal} strengthens relationships and fosters a healthier family dynamic.",
             "Law": f"You can explore how {behavior} increases legal risks, such as arrests, imprisonment, or traffic violations. You can also discuss how {goal} helps reduce legal troubles and promotes a more responsible approach to law.",
-            "Education": f"You can explore how {behavior} interferes with your client’s educational progress, leading to issues like poor attendance, suspension, or missed academic opportunities. You can also discuss how {goal} fosters better academic performance and overall success."
+            "Education": f"You can explore how {behavior} interferes with your client’s educational progress, leading to issues like poor attendance, suspension, or missed academic opportunities. You can also discuss how {goal} fosters better academic performance and overall success.",
         }
         first_counselor = """Counselor: Hello. How are you?"""
         first_client = """Client: I am good. What about you?"""
-        self.messages = [{'role': 'system', 'content': system_prompt}, 
-                         {'role': 'assistant', 'content': first_counselor},
-                         {'role': 'user', 'content': first_client}]
+        self.messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "assistant", "content": first_counselor},
+            {"role": "user", "content": first_client},
+        ]
         self.model = model
         self.goal = goal
         self.behavior = behavior
@@ -189,112 +222,94 @@ At the core of MI are a few basic principles, including expressing empathy and d
             "Support": "Generally supportive, understanding comments that are not codable as Affirm or Reflect. For example, 'That must have been difficult for you.'",
             "Warn": "Provide a warning or threat, implying negative consequences that will follow unless the client takes certain action. For example, 'You could go blind if you don’t manage your blood sugar levels.'",
             "Structure": "Give comments made to explain what is going to happen in the session, to make a transition from one part of a session to another, to help the client anticipate what will happen next, etc. For example, 'First, let’s discuss your drinking, and then we can explore other issues.'",
-            "No Strategy": "Say something not related to behavior change. For example, 'Good morning!'"
+            "No Strategy": "Say something not related to behavior change. For example, 'Good morning!'",
         }
         self.topic_tree = {
             "Health": {
                 "Diseases": [
-                    "Infection", 
-                    "Hypertension", 
-                    "Flu", 
-                    "Inflammation", 
-                    "Liver Disease", 
-                    "Lung Cancer", 
-                    "Chronic Obstructive Pulmonary Disease", 
-                    "Asthma", 
-                    "Stroke", 
-                    "Diabetes"
+                    "Infection",
+                    "Hypertension",
+                    "Flu",
+                    "Inflammation",
+                    "Liver Disease",
+                    "Lung Cancer",
+                    "Chronic Obstructive Pulmonary Disease",
+                    "Asthma",
+                    "Stroke",
+                    "Diabetes",
                 ],
                 "Physical Fitness": [
-                    "Physical Activity", 
-                    "Sport", 
-                    "Physical Fitness", 
-                    "Strength", 
-                    "Flexibility", 
-                    "Endurance"
+                    "Physical Activity",
+                    "Sport",
+                    "Physical Fitness",
+                    "Strength",
+                    "Flexibility",
+                    "Endurance",
                 ],
                 "Health Care": [
-                    "Dentistry", 
-                    "Caregiver Burden", 
-                    "Independent Living", 
-                    "Human Appearance"
+                    "Dentistry",
+                    "Caregiver Burden",
+                    "Independent Living",
+                    "Human Appearance",
                 ],
                 "Mental Disorders": [
-                    "Depression", 
-                    "Chronodisruption", 
-                    "Anxiety Disorders", 
-                    "Cognitive Decline"
+                    "Depression",
+                    "Chronodisruption",
+                    "Anxiety Disorders",
+                    "Cognitive Decline",
                 ],
                 "Sexual Health": [
-                    "Safe Sex", 
-                    "Maternal Health", 
-                    "Preterm Birth", 
-                    "Miscarriage", 
-                    "Birth Defects"
-                ]
+                    "Safe Sex",
+                    "Maternal Health",
+                    "Preterm Birth",
+                    "Miscarriage",
+                    "Birth Defects",
+                ],
             },
             "Economy": {
                 "Employment": [
-                    "Productivity", 
-                    "Absenteeism", 
-                    "Workplace Relationships", 
-                    "Career Break", 
-                    "Career Assessment", 
-                    "Absence Rate", 
-                    "Salary", 
-                    "Workplace Wellness", 
-                    "Workplace Incivility"
+                    "Productivity",
+                    "Absenteeism",
+                    "Workplace Relationships",
+                    "Career Break",
+                    "Career Assessment",
+                    "Absence Rate",
+                    "Salary",
+                    "Workplace Wellness",
+                    "Workplace Incivility",
                 ],
                 "Personal Finance": [
-                    "Cost of Living", 
-                    "Personal Budget", 
-                    "Debt", 
-                    "Income Deficit"
-                ]
+                    "Cost of Living",
+                    "Personal Budget",
+                    "Debt",
+                    "Income Deficit",
+                ],
             },
             "Interpersonal Relationships": {
-                "Family": [
-                    "Family Estrangement", 
-                    "Family Disruption", 
-                    "Divorce"
-                ],
+                "Family": ["Family Estrangement", "Family Disruption", "Divorce"],
                 "Parenting": [
-                    "Role Model", 
-                    "Child Development", 
-                    "Paternal Bond", 
-                    "Child Care", 
-                    "Habituation"
-                ]
+                    "Role Model",
+                    "Child Development",
+                    "Paternal Bond",
+                    "Child Care",
+                    "Habituation",
+                ],
             },
             "Law": {
-                "Criminal Law": [
-                    "Arrest", 
-                    "Imprisonment", 
-                    "Complaint"
-                ],
-                "Family Law": [
-                    "Child Custody"
-                ],
-                "Traffic Law": [
-                    "Traffic Ticket"
-                ]
+                "Criminal Law": ["Arrest", "Imprisonment", "Complaint"],
+                "Family Law": ["Child Custody"],
+                "Traffic Law": ["Traffic Ticket"],
             },
             "Education": {
-                "Student Affairs": [
-                    "Attendance", 
-                    "Suspension", 
-                    "Scholarship"
-                ],
-                "Assessment": [
-                    "Exam"
-                ]
-            }
+                "Student Affairs": ["Attendance", "Suspension", "Scholarship"],
+                "Assessment": ["Exam"],
+            },
         }
         self.explored_topics = []
         self.conversation = [first_counselor, first_client]
         self.topic_stack = []
         self.initialized = False
-    
+
     def infer_state(self):
         prompt = """During the Motivational Interviewing counseling conversation, the client may exhibit different states that refer to their readiness to change. The client's state can be one of the following:
 
@@ -372,9 +387,11 @@ In this conversation, the client shows significant progress in their thinking ab
 
 ### State Inference
 """
-        prompt = prompt.replace('[@context]', '\n- '.join(self.conversation[-10:]))
-        response = get_precise_response(messages=[{'role': 'user', 'content': prompt}], model=self.model)
-        response = response.replace('\n', ' ')
+        prompt = prompt.replace("[@context]", "\n- ".join(self.conversation[-10:]))
+        response = get_precise_response(
+            messages=[{"role": "user", "content": prompt}], model=self.model
+        )
+        response = response.replace("\n", " ")
         state = "Precontemplation"
         for s in ["Precontemplation", "Contemplation", "Preparation"]:
             if s in response:
@@ -403,7 +420,7 @@ In this conversation, the client shows significant progress in their thinking ab
 - **Structure**: Give comments made to explain what is going to happen in the session, to make a transition from one part of a session to another, to help the client anticipate what will happen next, etc. For example, "First, let’s discuss your drinking, and then we can explore other issues."
 - **No Strategy**: Say something not related to behavior change. For example, "Good morning!"
 
-Based on the current counseling context and the client's state, analyze and select appropriate strategies **but no more than 2** for **next response** to optimally advance the counseling process. 
+Based on the current counseling context and the client's state, analyze and select appropriate strategies **but no more than 2** for **next response** to optimally advance the counseling process.
 
 Given Current Context:
 [@context]
@@ -413,19 +430,39 @@ Client’s State:
 
 Please analyse the current situation, then select appropriate strategies based on current topic and situation to motivate client after analysing. Remember, you can select up to 2 strategies.
 """
-        prompt = prompt.replace('[@context]', '\n'.join(self.conversation))
-        prompt = prompt.replace('[@state]', f'{state}: {self.state2instruction[state]}')
-        response = get_precise_response(messages=[{'role': 'user', 'content': prompt}], model=self.model)
-        response = response.replace('\n', ' ')
+        prompt = prompt.replace("[@context]", "\n".join(self.conversation))
+        prompt = prompt.replace("[@state]", f"{state}: {self.state2instruction[state]}")
+        response = get_precise_response(
+            messages=[{"role": "user", "content": prompt}], model=self.model
+        )
+        response = response.replace("\n", " ")
         selected_actions = []
-        for action in ["Advise", "Affirm", "Direct", "Emphasize Control", "Facilitate", "Inform", "Closed Question", "Open Question", "Raise Concern", "Confront", "Simple Reflection", "Complex Reflection", "Reframe", "Support", "Warn", "Structure", "No Strategy"]:
+        for action in [
+            "Advise",
+            "Affirm",
+            "Direct",
+            "Emphasize Control",
+            "Facilitate",
+            "Inform",
+            "Closed Question",
+            "Open Question",
+            "Raise Concern",
+            "Confront",
+            "Simple Reflection",
+            "Complex Reflection",
+            "Reframe",
+            "Support",
+            "Warn",
+            "Structure",
+            "No Strategy",
+        ]:
             if action in response:
                 selected_actions.append(action)
         return response, selected_actions
 
     def initialize_topic(self):
-        analysis_prompt = f"""You are a counselor working with a client whose goal is to reduce drug use. After establishing a foundation of trust, your focus is now shifting to identifying specific topics that may motivate the client to change their behavior. These topics include **Health**, **Economy**, **Interpersonal Relationships**, **Law**, and Education. Your Task is to analyze the client's response indicating which are most likely to engage the client and help them recognize either the benefits of achieving the counseling goal or the potential risks of continuing their behavior. The candidate topics and distribution are as follows:
-        
+        analysis_prompt = """You are a counselor working with a client whose goal is to reduce drug use. After establishing a foundation of trust, your focus is now shifting to identifying specific topics that may motivate the client to change their behavior. These topics include **Health**, **Economy**, **Interpersonal Relationships**, **Law**, and Education. Your Task is to analyze the client's response indicating which are most likely to engage the client and help them recognize either the benefits of achieving the counseling goal or the potential risks of continuing their behavior. The candidate topics and distribution are as follows:
+
 - Health: You can explore how the client's behavior impacts your client's physical and mental well-being, leading to potential health issues. You can also discuss the benefits of counseling goal, which can improve overall quality of life and promote better health outcomes.
 - Economy: You can explore how client's behavior affects your client's financial situation, such as through reduced productivity, increased absenteeism, or poor financial management. You can also discuss how counseling goal helps improve economic stability and workplace performance.
 - Interpersonal Relationships: You can explore how client's behavior affects your client’s personal relationships, leading to family strain or issues with parenting. You can also discuss how counseling goal strengthens relationships and fosters a healthier family dynamic.
@@ -447,7 +484,7 @@ Please analyse the current situation, then select appropriate strategies based o
 - Client: I mean, sometimes I feel a bit groggy the next day, but it’s nothing I can’t handle. Honestly, with everything going on—work stress, family stuff—it's hard to find time to relax otherwise. Just trying to cope with all the demands around me.
 
 ### Topic Exploration
-The client acknowledges feeling groggy after using weed but downplays its significance by stating it's manageable. He emphasizes significant work stress ("work stress") and family issues ("family stuff"), indicating these are major stressors in his life. He uses weed to cope with these pressures, suggesting that his drug use is linked to managing stress from work and family demands. Health concerns are mentioned but minimized, while there is no reference to legal issues or education. 
+The client acknowledges feeling groggy after using weed but downplays its significance by stating it's manageable. He emphasizes significant work stress ("work stress") and family issues ("family stuff"), indicating these are major stressors in his life. He uses weed to cope with these pressures, suggesting that his drug use is linked to managing stress from work and family demands. Health concerns are mentioned but minimized, while there is no reference to legal issues or education.
 
 ### Conversation Context
 - Client: Smoking is just something I do occasionally with friends, especially when we hang out or take breaks at work. It's mostly social for me, like a way to unwind after a long day. Plus, I enjoy the vibe at cigar bars in Vegas.
@@ -464,7 +501,7 @@ The client acknowledges feeling groggy after using weed but downplays its signif
 - Client: That's an interesting thought. I guess there are other ways to unwind, like going for a hike or just grabbing coffee. But sometimes, it feels good to stick with what I know. Change can be tricky, you know? It’s all about finding that balance, I suppose.
 
 ### Topic Exploration
-The client acknowledges that there are other ways to unwind, such as going for a hike or grabbing coffee, indicating some openness to alternatives. However, he also expresses reluctance to change by saying, "it feels good to stick with what I know" and "change can be tricky." This suggests ambivalence about altering his smoking habits. The client places significant emphasis on social interactions and the enjoyment derived from moments and conversations with friends, highlighting the importance of interpersonal relationships in his smoking behavior. Health is brought up by the counselor, but the client doesn't directly address health impacts, though considering activities like hiking implies a subtle awareness. There's a slight mention of work ("take breaks at work"), suggesting minor relevance to economic factors. No references are made to legal or educational concerns. 
+The client acknowledges that there are other ways to unwind, such as going for a hike or grabbing coffee, indicating some openness to alternatives. However, he also expresses reluctance to change by saying, "it feels good to stick with what I know" and "change can be tricky." This suggests ambivalence about altering his smoking habits. The client places significant emphasis on social interactions and the enjoyment derived from moments and conversations with friends, highlighting the importance of interpersonal relationships in his smoking behavior. Health is brought up by the counselor, but the client doesn't directly address health impacts, though considering activities like hiking implies a subtle awareness. There's a slight mention of work ("take breaks at work"), suggesting minor relevance to economic factors. No references are made to legal or educational concerns.
 
 ### Conversation Context
 - [@context]
@@ -479,12 +516,20 @@ The client acknowledges that there are other ways to unwind, such as going for a
 
 ### Topic Exploration
 """
-        analysis_prompt = analysis_prompt.replace('[@context]', '\n- '.join(self.conversation[-6:-1]))
-        analysis_prompt = analysis_prompt.replace('[@goal]', self.goal)
-        analysis_prompt = analysis_prompt.replace('[@behavior]', self.behavior)
-        analysis_prompt = analysis_prompt.replace('[@topics]', ' -> '.join(self.explored_topics))
-        analysis_prompt = analysis_prompt.replace('[@response]', self.conversation[-1])
-        analysis = get_precise_response(messages=[{'role': 'user', 'content': analysis_prompt}], max_tokens=150, model=self.model)
+        analysis_prompt = analysis_prompt.replace(
+            "[@context]", "\n- ".join(self.conversation[-6:-1])
+        )
+        analysis_prompt = analysis_prompt.replace("[@goal]", self.goal)
+        analysis_prompt = analysis_prompt.replace("[@behavior]", self.behavior)
+        analysis_prompt = analysis_prompt.replace(
+            "[@topics]", " -> ".join(self.explored_topics)
+        )
+        analysis_prompt = analysis_prompt.replace("[@response]", self.conversation[-1])
+        analysis = get_precise_response(
+            messages=[{"role": "user", "content": analysis_prompt}],
+            max_tokens=150,
+            model=self.model,
+        )
         json_prompt = """You are a counselor working with a client whose goal is to reduce drug use. After establishing a foundation of trust, your focus is now shifting to identifying specific topics that may motivate the client to change their behavior. These topics include **Health**, **Economy**, **Interpersonal Relationships**, **Law**, and Education. Your Task is to provide a distribution of the topic in a **JSON format** indicating which are most likely to engage the client based on the dialogue context, client's response and professor's analysis. The candidate topics and distribution are as follows:
 
 - Health: You can explore how the client's behavior impacts your client's physical and mental well-being, leading to potential health issues. You can also discuss the benefits of counseling goal, which can improve overall quality of life and promote better health outcomes.
@@ -508,7 +553,7 @@ The client acknowledges that there are other ways to unwind, such as going for a
 - Client: I mean, sometimes I feel a bit groggy the next day, but it’s nothing I can’t handle. Honestly, with everything going on—work stress, family stuff—it's hard to find time to relax otherwise. Just trying to cope with all the demands around me.
 
 ### Professor's Analysis
-The client acknowledges feeling groggy after using weed but downplays its significance by stating it's manageable. He emphasizes significant work stress ("work stress") and family issues ("family stuff"), indicating these are major stressors in his life. He uses weed to cope with these pressures, suggesting that his drug use is linked to managing stress from work and family demands. Health concerns are mentioned but minimized, while there is no reference to legal issues or education. 
+The client acknowledges feeling groggy after using weed but downplays its significance by stating it's manageable. He emphasizes significant work stress ("work stress") and family issues ("family stuff"), indicating these are major stressors in his life. He uses weed to cope with these pressures, suggesting that his drug use is linked to managing stress from work and family demands. Health concerns are mentioned but minimized, while there is no reference to legal issues or education.
 
 ### Topic Distribution
 {"Economy": 45, "Interpersonal Relationships": 35, "Health": 20, "Law": 0, "Education": 0}
@@ -528,7 +573,7 @@ The client acknowledges feeling groggy after using weed but downplays its signif
 - Client: That's an interesting thought. I guess there are other ways to unwind, like going for a hike or just grabbing coffee. But sometimes, it feels good to stick with what I know. Change can be tricky, you know? It’s all about finding that balance, I suppose.
 
 ### Professor's Analysis
-The client acknowledges that there are other ways to unwind, such as going for a hike or grabbing coffee, indicating some openness to alternatives. However, he also expresses reluctance to change by saying, "it feels good to stick with what I know" and "change can be tricky." This suggests ambivalence about altering his smoking habits. The client places significant emphasis on social interactions and the enjoyment derived from moments and conversations with friends, highlighting the importance of interpersonal relationships in his smoking behavior. Health is brought up by the counselor, but the client doesn't directly address health impacts, though considering activities like hiking implies a subtle awareness. There's a slight mention of work ("take breaks at work"), suggesting minor relevance to economic factors. No references are made to legal or educational concerns. 
+The client acknowledges that there are other ways to unwind, such as going for a hike or grabbing coffee, indicating some openness to alternatives. However, he also expresses reluctance to change by saying, "it feels good to stick with what I know" and "change can be tricky." This suggests ambivalence about altering his smoking habits. The client places significant emphasis on social interactions and the enjoyment derived from moments and conversations with friends, highlighting the importance of interpersonal relationships in his smoking behavior. Health is brought up by the counselor, but the client doesn't directly address health impacts, though considering activities like hiking implies a subtle awareness. There's a slight mention of work ("take breaks at work"), suggesting minor relevance to economic factors. No references are made to legal or educational concerns.
 
 ### Topic Distribution
 {"Interpersonal Relationships": 60, "Health": 25, "Economy": 15, "Law": 0, "Education": 0}
@@ -549,29 +594,37 @@ The client acknowledges that there are other ways to unwind, such as going for a
 
 ### Topic Distribution
 """
-        json_prompt = json_prompt.replace('[@context]', '\n- '.join(self.conversation[-6:-1]))
-        json_prompt = json_prompt.replace('[@goal]', self.goal)
-        json_prompt = json_prompt.replace('[@behavior]', self.behavior)
-        json_prompt = json_prompt.replace('[@topics]', ' -> '.join(self.explored_topics))
-        json_prompt = json_prompt.replace('[@response]', self.conversation[-1])
-        json_prompt = json_prompt.replace('[@analysis]', analysis)
-        response = get_json_response(messages=[{'role': 'user', 'content': json_prompt}], model=self.model)
+        json_prompt = json_prompt.replace(
+            "[@context]", "\n- ".join(self.conversation[-6:-1])
+        )
+        json_prompt = json_prompt.replace("[@goal]", self.goal)
+        json_prompt = json_prompt.replace("[@behavior]", self.behavior)
+        json_prompt = json_prompt.replace(
+            "[@topics]", " -> ".join(self.explored_topics)
+        )
+        json_prompt = json_prompt.replace("[@response]", self.conversation[-1])
+        json_prompt = json_prompt.replace("[@analysis]", analysis)
+        response = get_json_response(
+            messages=[{"role": "user", "content": json_prompt}], model=self.model
+        )
         try:
-            json_content = re.search(r'\{[^}]+\}', response).group()
+            json_content = re.search(r"\{[^}]+\}", response).group()
             topic_distribution = eval(json_content)
             topic = max(topic_distribution, key=topic_distribution.get)
         except SyntaxError:
-            topic = random.choice(["Health", "Economy", "Interpersonal Relationships", "Law", "Education"])
+            topic = random.choice(
+                ["Health", "Economy", "Interpersonal Relationships", "Law", "Education"]
+            )
         if topic_distribution[topic] > 0.5 or len(self.conversation) > 10:
             self.topic_stack.append(topic)
             self.initialized = True
         return analysis, "Switch", topic
-    
+
     def explore(self):
-        prompt = f"""You are acting as a counseling agent, interacting with a client to help them achieve their counseling goal, such as smoking cessation or reducing alcohol consumption. Each client has unique motivations, and as the counselor, you aim to help the client discover their inherent motivation for change. Your role involves exploring various topics to uncover what concerns the client the most. Your task is to analyze how the client responds to the current topic and then recommend the next topic exploration direction based on their level of engagement and interest, but do not generate a counselor's response. Your analysis should flow naturally and conclude with your recommended action and topic in bold format.
+        prompt = """You are acting as a counseling agent, interacting with a client to help them achieve their counseling goal, such as smoking cessation or reducing alcohol consumption. Each client has unique motivations, and as the counselor, you aim to help the client discover their inherent motivation for change. Your role involves exploring various topics to uncover what concerns the client the most. Your task is to analyze how the client responds to the current topic and then recommend the next topic exploration direction based on their level of engagement and interest, but do not generate a counselor's response. Your analysis should flow naturally and conclude with your recommended action and topic in bold format.
 
 ### Context
-- Counselor: It sounds like unwinding with friends is your way of coping, but maybe viewing those moments as a chance to connect more deeply without alcohol could enhance your friendships 
+- Counselor: It sounds like unwinding with friends is your way of coping, but maybe viewing those moments as a chance to connect more deeply without alcohol could enhance your friendships
 - Client: I get that, but it’s hard to picture letting go of drinking during those social moments. It feels normal and fun. I’m not sure if I really need to change anything right now. But I guess exploring other options could be worth considering.
 - Counselor: I understand enjoying drinks with friends feels fun, but what if those moments could feel even richer without alcohol? Reducing drinking might not only strengthen your friendships, but also create a more supportive environment for your family, leading to deeper connections and shared experiences. How does that sound?
 
@@ -585,7 +638,7 @@ The client acknowledges that there are other ways to unwind, such as going for a
 
 ### Topic Exploration Options
 You have two options:
-1. Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including: 
+1. Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including:
     - Family
     - Parenting
 2. Switch: If the client is interested in the broader category but not this specific topic, switch to another related topic under the same super topic, including:
@@ -616,7 +669,7 @@ The client is reflecting on the balance between social drinking and health. Whil
 
 ### Topic Exploration Options
 You have three options:
-1. Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including: 
+1. Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including:
     - Family Estrangement
     - Family Disruption
     - Divorce
@@ -647,16 +700,16 @@ Looking at the client's response, we can see they're touching on family tensions
 
 ### Topic Exploration Options
 """
-        prompt = prompt.replace('[@goal]', self.goal)
-        prompt = prompt.replace('[@behavior]', self.behavior)
-        prompt = prompt.replace('[@context]', '\n- '.join(self.conversation[-6:-1]))
-        prompt = prompt.replace('[@response]', self.conversation[-1])
-        prompt = prompt.replace('[@topics]', ' -> '.join(self.explored_topics))
+        prompt = prompt.replace("[@goal]", self.goal)
+        prompt = prompt.replace("[@behavior]", self.behavior)
+        prompt = prompt.replace("[@context]", "\n- ".join(self.conversation[-6:-1]))
+        prompt = prompt.replace("[@response]", self.conversation[-1])
+        prompt = prompt.replace("[@topics]", " -> ".join(self.explored_topics))
         step_in_topics, switch_topics, step_out_topics = None, None, None
         if len(self.topic_stack) == 1:
             step_in_topics = [*self.topic_tree[self.topic_stack[0]].keys()]
             switch_topics = [*self.topic_tree.keys()]
-            prompt += f"""You have two options:
+            prompt += """You have two options:
 1. Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including:
     - [@step_in_topics]
 2. Switch: If the client is interested in the broader category but not this specific topic, switch to another related topic under the same super topic, including:
@@ -666,13 +719,17 @@ Please analyze the client's feedback toward the current situation and then choos
 
 ### Topic Exploration Results
 """
-            prompt = prompt.replace('[@step_in_topics]', '\n    - '.join(step_in_topics))
-            prompt = prompt.replace('[@switch_topics]', '\n    - '.join(switch_topics))
+            prompt = prompt.replace(
+                "[@step_in_topics]", "\n    - ".join(step_in_topics)
+            )
+            prompt = prompt.replace("[@switch_topics]", "\n    - ".join(switch_topics))
         elif len(self.topic_stack) == 2:
-            step_in_topics = self.topic_tree[self.topic_stack[0]][self.topic_stack[1]].copy()
+            step_in_topics = self.topic_tree[self.topic_stack[0]][
+                self.topic_stack[1]
+            ].copy()
             switch_topics = [*self.topic_tree[self.topic_stack[0]].keys()]
             step_out_topics = [*self.topic_tree.keys()]
-            prompt += f"""You have three options:
+            prompt += """You have three options:
 - Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including:
     - [@step_in_topics]
 - Switch: If the client is interested in the broader category but not this specific topic, switch to another related topic under the same super topic, including:
@@ -684,14 +741,20 @@ Please analyze the client's feedback toward the current situation and then choos
 
 ### Topic Exploration Results
 """
-            prompt = prompt.replace('[@step_in_topics]', '\n    - '.join(step_in_topics))
-            prompt = prompt.replace('[@switch_topics]', '\n    - '.join(switch_topics))
-            prompt = prompt.replace('[@step_out_topics]', '\n    - '.join(step_out_topics))
+            prompt = prompt.replace(
+                "[@step_in_topics]", "\n    - ".join(step_in_topics)
+            )
+            prompt = prompt.replace("[@switch_topics]", "\n    - ".join(switch_topics))
+            prompt = prompt.replace(
+                "[@step_out_topics]", "\n    - ".join(step_out_topics)
+            )
         elif len(self.topic_stack) == 3:
-            switch_topics = self.topic_tree[self.topic_stack[0]][self.topic_stack[1]].copy()
+            switch_topics = self.topic_tree[self.topic_stack[0]][
+                self.topic_stack[1]
+            ].copy()
             step_out_topics = [*self.topic_tree[self.topic_stack[0]].keys()]
             if len(step_out_topics) != 0:
-                prompt += f"""You have two options: 
+                prompt += """You have two options:
 - Switch: If the client is interested in the broader category but not this specific topic, switch to another related topic under the same super topic, including:
     - [@switch_topics]
 - Step Out: If the client’s interest lies in a broader area, step out to a higher-level topic to explore that further, including:
@@ -701,10 +764,14 @@ Please analyze the client's feedback toward the current situation and then choos
 
 ### Topic Exploration Results
 """
-                prompt = prompt.replace('[@switch_topics]', '\n    - '.join(switch_topics))
-                prompt = prompt.replace('[@step_out_topics]', '\n    - '.join(step_out_topics))
+                prompt = prompt.replace(
+                    "[@switch_topics]", "\n    - ".join(switch_topics)
+                )
+                prompt = prompt.replace(
+                    "[@step_out_topics]", "\n    - ".join(step_out_topics)
+                )
             else:
-                prompt += f"""You have one option:
+                prompt += """You have one option:
 - Step Out: If the client’s interest lies in a broader area, step out to a higher-level topic to explore that further, including:
     - [@step_out_topics]
 
@@ -712,19 +779,25 @@ Please analyze the client's feedback toward the current situation and then choos
 
 ### Topic Exploration Results
 """
-                prompt = prompt.replace('[@step_out_topics]', '\n    - '.join(step_out_topics))
-        response = get_precise_response(messages=[{'role': 'user', 'content': prompt}], max_tokens=150, model=self.model)
+                prompt = prompt.replace(
+                    "[@step_out_topics]", "\n    - ".join(step_out_topics)
+                )
+        response = get_precise_response(
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=150,
+            model=self.model,
+        )
         action, topic = None, None
-        analysis = response.replace('\n', ' ')
+        analysis = response.replace("\n", " ")
         if step_in_topics:
-            if 'Step Into' in response or 'step into' in response:
+            if "Step Into" in response or "step into" in response:
                 action = "Step Into"
-                response_topic = re.findall(r'\*\*(.*?)\*\*', response)
+                response_topic = re.findall(r"\*\*(.*?)\*\*", response)
                 if len(response_topic) != 0 and response_topic[-1] in step_in_topics:
                     topic = response_topic[-1]
                 else:
                     for t in step_in_topics:
-                        if t in response.split('.')[-2]:
+                        if t in response.split(".")[-2]:
                             topic = t
                             break
                     if not topic:
@@ -735,12 +808,12 @@ Please analyze the client's feedback toward the current situation and then choos
                     if not topic:
                         topic = random.choice(step_in_topics)
             else:
-                response_topic = re.findall(r'\*\*(.*?)\*\*', response)
+                response_topic = re.findall(r"\*\*(.*?)\*\*", response)
                 if len(response_topic) != 0 and response_topic[-1] in step_in_topics:
                     topic = response_topic[-1]
                 else:
                     for t in step_in_topics:
-                        if t in response.split('.')[-2]:
+                        if t in response.split(".")[-2]:
                             topic = t
                             break
                     if not topic:
@@ -754,14 +827,14 @@ Please analyze the client's feedback toward the current situation and then choos
                 self.topic_stack.append(topic)
                 return analysis, action, topic
         if switch_topics:
-            if 'Switch' in response or 'switch' in response:
+            if "Switch" in response or "switch" in response:
                 action = "Switch"
-                response_topic = re.findall(r'\*\*(.*?)\*\*', response)
+                response_topic = re.findall(r"\*\*(.*?)\*\*", response)
                 if len(response_topic) != 0 and response_topic[-1] in switch_topics:
                     topic = response_topic[-1]
                 else:
                     for t in switch_topics:
-                        if t in response.split('.')[-2]:
+                        if t in response.split(".")[-2]:
                             topic = t
                             break
                     if not topic:
@@ -772,12 +845,12 @@ Please analyze the client's feedback toward the current situation and then choos
                     if not topic:
                         topic = random.choice(switch_topics)
             else:
-                response_topic = re.findall(r'\*\*(.*?)\*\*', response)
+                response_topic = re.findall(r"\*\*(.*?)\*\*", response)
                 if len(response_topic) != 0 and response_topic[-1] in switch_topics:
                     topic = response_topic[-1]
                 else:
                     for t in switch_topics:
-                        if t in response.split('.')[-2]:
+                        if t in response.split(".")[-2]:
                             topic = t
                             break
                     if not topic:
@@ -792,14 +865,14 @@ Please analyze the client's feedback toward the current situation and then choos
                 self.topic_stack.append(topic)
                 return analysis, action, topic
         if step_out_topics:
-            if 'Step Out' in response or 'step out' in response:
+            if "Step Out" in response or "step out" in response:
                 action = "Step Out"
-                response_topic = re.findall(r'\*\*(.*?)\*\*', response)
+                response_topic = re.findall(r"\*\*(.*?)\*\*", response)
                 if len(response_topic) != 0 and response_topic[-1] in step_out_topics:
                     topic = response_topic[-1]
                 else:
                     for t in step_out_topics:
-                        if t in response.split('.')[-2]:
+                        if t in response.split(".")[-2]:
                             topic = t
                             break
                     if not topic:
@@ -810,12 +883,12 @@ Please analyze the client's feedback toward the current situation and then choos
                     if not topic:
                         topic = random.choice(step_out_topics)
             else:
-                response_topic = re.findall(r'\*\*(.*?)\*\*', response)
+                response_topic = re.findall(r"\*\*(.*?)\*\*", response)
                 if len(response_topic) != 0 and response_topic[-1] in step_out_topics:
                     topic = response_topic[-1]
                 else:
                     for t in step_out_topics:
-                        if t in response.split('.')[-2]:
+                        if t in response.split(".")[-2]:
                             topic = t
                             break
                     if not topic:
@@ -830,8 +903,7 @@ Please analyze the client's feedback toward the current situation and then choos
                 self.topic_stack.pop()
                 self.topic_stack.append(topic)
                 return analysis, action, topic
-            
-    
+
     def refine(self, context, response, strategy, topic):
         feedback_prompt = """Please analyze and provide feedback to help refine the counselor's response within the context of the conversation, focusing on how explicitly the response reflects the specified topic, and how consistently the response follows the given strategy.
 
@@ -856,7 +928,7 @@ Based on the feedback above, offer concrete recommendations to improve the respo
 ### Counselor's Response
 - Counselor: It sounds like you want to enhance your social experiences. What if you viewed cutting back on alcohol as a way to improve your fitness? Less drinking could lead to better endurance and strength, ultimately making those outings feel even more enjoyable and fulfilling.
 
-### Given Topic 
+### Given Topic
 - Physical Fitness: You can explore how client's behavior negatively affects physical fitness, leading to a decline in overall health. You can also discuss how counseling goal promotes better fitness, improves health, and increases energy levels.
 
 ### Strategy Used
@@ -888,7 +960,7 @@ Total Score: 5/10
 ### Counselor's Response
 - Counselor: It sounds like drinking helps you feel better momentarily, but what if we saw that tiredness as your body’s way of asking for better care? Reducing alcohol could actually open up new avenues for fitness, boosting your energy and resilience in the long run.
 
-### Given Topic 
+### Given Topic
 - Health Care: You can explore how client's behavior impacts their health, leading to potential health issues. You can also discuss the benefits of counseling goal, which can improve overall quality of life and promote better health outcomes.
 
 ### Strategy Used
@@ -939,7 +1011,7 @@ Total Score: 9/10
 ### Original Counselor's Response
 - Counselor: It sounds like you want to enhance your social experiences. What if you viewed cutting back on alcohol as a way to improve your fitness? Less drinking could lead to better endurance and strength, ultimately making those outings feel even more enjoyable and fulfilling.
 
-### Given Topic 
+### Given Topic
 - Physical Fitness: You can explore how client's behavior negatively affects physical fitness, leading to a decline in overall health. You can also discuss how counseling goal promotes better fitness, improves health, and increases energy levels.
 
 ### Strategy Used
@@ -976,7 +1048,7 @@ Please limit the word count to no more than 50 words!!!
 ### Original Counselor's Response
 - Counselor: It sounds like your busy life is a sign of how much you value your family. Maybe seeing how your drug use impacts those connections could be an opportunity to strengthen those relationships. Exploring hobbies might just bring you closer together during these chaotic times.
 
-### Given Topic 
+### Given Topic
 - Family: You can explore how client's behavior affects family relationships, leading to potential strain or distance. You can also discuss how counseling goal strengthens family connections and fosters a healthier dynamic.
 
 ### Strategy Used
@@ -1019,49 +1091,74 @@ Please limit the word count to no more than 50 words!!!
 
 Please limit the word count to no more than 50 words!!!
 """
-        context = '\n- '.join(context[-5:])
+        context = "\n- ".join(context[-5:])
         for _ in range(3):
-            temp_feedback_prompt = feedback_prompt.replace('[@context]', context).replace('[@response]', response).replace('[@topic]', topic).replace('[@strategy]', strategy)
-            feedback = get_precise_response(messages=[{'role': 'user', 'content': temp_feedback_prompt}])
-            score = re.search(r'Total Score: (\d+)/10', feedback)
+            temp_feedback_prompt = (
+                feedback_prompt.replace("[@context]", context)
+                .replace("[@response]", response)
+                .replace("[@topic]", topic)
+                .replace("[@strategy]", strategy)
+            )
+            feedback = get_precise_response(
+                messages=[{"role": "user", "content": temp_feedback_prompt}]
+            )
+            score = re.search(r"Total Score: (\d+)/10", feedback)
             if score and int(score.group(1)) > 7:
                 break
-            temp_refine_prompt = refine_prompt.replace('[@context]', context).replace('[@response]', response).replace('[@topic]', topic).replace('[@strategy]', strategy).replace('[@feedback]', feedback)
-            response = get_chatbot_response(messages=[{'role': 'user', 'content': temp_refine_prompt}])
-            for r in response.split('\n'):
-                if r.startswith('- Counselor:'):
-                    response = r.replace('- Counselor:', 'Counselor:')
+            temp_refine_prompt = (
+                refine_prompt.replace("[@context]", context)
+                .replace("[@response]", response)
+                .replace("[@topic]", topic)
+                .replace("[@strategy]", strategy)
+                .replace("[@feedback]", feedback)
+            )
+            response = get_chatbot_response(
+                messages=[{"role": "user", "content": temp_refine_prompt}]
+            )
+            for r in response.split("\n"):
+                if r.startswith("- Counselor:"):
+                    response = r.replace("- Counselor:", "Counselor:")
                     break
         return response
-  
+
     def generate(self, last_utterance, topic, state, selected_strategies):
         prompt = f"{last_utterance}\nBased on the previous counseling session, generate the response based on the following instruction and strategy: \nThe state of client is {state}, where {self.state2instruction[state]}\nThe client may interest about {topic}. {self.topic2description[topic]}\n"
         candidate_responses = {}
         strategies = {}
         for strategy in selected_strategies:
-            temp_prompt = prompt + f"The professional counselor suggests using the following strategy:\n- **{strategy}**: {self.strategy2description[strategy]}\nPlease generate one utterance following the suggested strategy and shorter than 50 words."
-            self.messages[-1]['content'] = temp_prompt
-            response = get_chatbot_response(messages=self.messages, max_tokens=150, model=self.model)
-            response = ' '.join(response.split('\n'))
-            response = response.replace('*', '').replace('#', '')
-            if not response.startswith('Counselor: '):
+            temp_prompt = (
+                prompt
+                + f"The professional counselor suggests using the following strategy:\n- **{strategy}**: {self.strategy2description[strategy]}\nPlease generate one utterance following the suggested strategy and shorter than 50 words."
+            )
+            self.messages[-1]["content"] = temp_prompt
+            response = get_chatbot_response(
+                messages=self.messages, max_tokens=150, model=self.model
+            )
+            response = " ".join(response.split("\n"))
+            response = response.replace("*", "").replace("#", "")
+            if not response.startswith("Counselor: "):
                 response = f"Counselor: {response}"
-            if 'Client: ' in response:
-                response = response.split('Client: ')[0]
+            if "Client: " in response:
+                response = response.split("Client: ")[0]
             candidate_responses[len(candidate_responses)] = response
             strategies[len(strategies)] = strategy
-        temp_prompt = prompt + f"The professional counselor suggests using the following startegies:\n"
+        temp_prompt = (
+            prompt
+            + "The professional counselor suggests using the following startegies:\n"
+        )
         for strategy in selected_strategies:
             temp_prompt += f"- **{strategy}**: {self.strategy2description[strategy]}\n"
-        temp_prompt += f"Please generate a response combining all the suggested strategies. The generated utterance should be precise and shorter than 50 words."
-        self.messages[-1]['content'] = temp_prompt
-        response = get_chatbot_response(messages=self.messages, max_tokens=150, model=self.model)
-        response = ' '.join(response.split('\n'))
-        response = response.replace('*', '').replace('#', '')
-        if not response.startswith('Counselor: '):
+        temp_prompt += "Please generate a response combining all the suggested strategies. The generated utterance should be precise and shorter than 50 words."
+        self.messages[-1]["content"] = temp_prompt
+        response = get_chatbot_response(
+            messages=self.messages, max_tokens=150, model=self.model
+        )
+        response = " ".join(response.split("\n"))
+        response = response.replace("*", "").replace("#", "")
+        if not response.startswith("Counselor: "):
             response = f"Counselor: {response}"
-        if 'Client: ' in response:
-            response = response.split('Client: ')[0]
+        if "Client: " in response:
+            response = response.split("Client: ")[0]
         candidate_responses[len(candidate_responses)] = response
         strategies[len(strategies)] = "Combined Strategies"
         respnose_select_prompt = f"""You will act as a skilled counselor conducting a Motivational Interviewing (MI) session aimed at achieving {self.goal} related to the client's behavior, {self.behavior}. Your task is to help the client discover their inherent motivation to change and identify a tangible plan to change. The current state of the counseling session is as follows:
@@ -1074,37 +1171,59 @@ At this point, multiple responses have been generated based on the client’s cu
 
 Please choose the most suitable response based on the counseling context and the client's motivational state. Reply with the ID of the response you find most appropriate for the current situation.
 """
-        respnose_select_prompt = respnose_select_prompt.replace('[@conversation]', '- ' + '\n- '.join(self.conversation))
-        respnose_select_prompt = respnose_select_prompt.replace('[@responses]', '\n'.join([f"{i+1}. {response}" for i, response in candidate_responses.items()]))
-        response = get_precise_response(messages=[{'role': 'user', 'content': respnose_select_prompt}], max_tokens=150, model=self.model)
+        respnose_select_prompt = respnose_select_prompt.replace(
+            "[@conversation]", "- " + "\n- ".join(self.conversation)
+        )
+        respnose_select_prompt = respnose_select_prompt.replace(
+            "[@responses]",
+            "\n".join(
+                [f"{i+1}. {response}" for i, response in candidate_responses.items()]
+            ),
+        )
+        response = get_precise_response(
+            messages=[{"role": "user", "content": respnose_select_prompt}],
+            max_tokens=150,
+            model=self.model,
+        )
         for i in candidate_responses.keys():
-            if str(i+1) in response:
+            if str(i + 1) in response:
                 return candidate_responses[i], strategies[i]
         return candidate_responses[2], strategies[2]
 
     def receive(self, response):
-        self.messages.append({'role': 'user', 'content': response})
+        self.messages.append({"role": "user", "content": response})
         self.conversation.append(response)
-    
+
     def reply(self):
         state = self.infer_state()
         if not self.initialized:
-            exploration, action, topic = self.initialize_topic()            
+            exploration, action, topic = self.initialize_topic()
         else:
             exploration, action, topic = self.explore()
         self.explored_topics.append(topic)
-        strategy_analysis, selected_strategies  = self.select_strategy(state)
-        last_utterance = self.messages[-1]['content']
-        response, final_strategy = self.generate(last_utterance, topic, state, selected_strategies)
+        strategy_analysis, selected_strategies = self.select_strategy(state)
+        last_utterance = self.messages[-1]["content"]
+        response, final_strategy = self.generate(
+            last_utterance, topic, state, selected_strategies
+        )
         if final_strategy == "Combined Strategies":
-            final_strategy = ' + '.join(selected_strategies)
-            strategy_description = self.strategy2description[selected_strategies[0]] + '\n- ' + self.strategy2description[selected_strategies[1]]
+            final_strategy = " + ".join(selected_strategies)
+            strategy_description = (
+                self.strategy2description[selected_strategies[0]]
+                + "\n- "
+                + self.strategy2description[selected_strategies[1]]
+            )
         else:
             strategy_description = self.strategy2description[final_strategy]
-        response = response.replace('\n', ' ').strip().lstrip()
-        response = self.refine(self.conversation[-5:], response, strategy_description, self.topic2description[topic])
-        response = response.replace('\n', ' ').strip().lstrip()
-        self.messages[-1]['content'] = last_utterance
-        self.messages.append({'role': 'assistant', 'content': response})
+        response = response.replace("\n", " ").strip().lstrip()
+        response = self.refine(
+            self.conversation[-5:],
+            response,
+            strategy_description,
+            self.topic2description[topic],
+        )
+        response = response.replace("\n", " ").strip().lstrip()
+        self.messages[-1]["content"] = last_utterance
+        self.messages.append({"role": "assistant", "content": response})
         self.conversation.append(response)
         return f"[Inferred State: {state} || Strategy Selection: {strategy_analysis} || Strategies: {selected_strategies} || Final Strategy: {final_strategy} || Topic: {topic} || Exploration Action: {action} || Exploration: {exploration}] {response}"

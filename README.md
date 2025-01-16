@@ -41,6 +41,8 @@ python src/generate.py \
 
 **[2024-11-20]** Strengthen the Self-Refine method to refine responses, thereby increasing the accuracy of reflecting provided instructions.
 
+**[2025-1-16]** Enhance the topic tree structure to represent it as a topic graph. Implement a retrieval-based approach for the client simulator to identify the most relevant topic at the present time.
+
 ## The STAR Framework
 
 Our proposed STAR framework consists of four key modules that collaboratively mimic a counselor performing MI counseling, that is: (a) *<u>S</u>tate Inference*, which infers the current client's state based on the transtheoretical model of health behavior change. Based on the inferred client's state, the counselor may perform topic exploration before selecting a response strategy; (b) *<u>T</u>opic Exploration*, which explores a wide range of motivation topics in a topic tree to find the topic that may evoke change talk with the client; (c) *Strategy Selection*, also known as *<u>A</u>ction Selection*, which selects the appropriate strategy based on the current client's state, session context, and identified topic (if any); and (d) *<u>R</u>esponse Generation \& Ranking*, which generates a few candidate responses based on the selected strategies and selects the most appropriate response that is coherent with the current context and aligned with MI principles. In this study, we assume that the counselor is aware of the client's behavior problem before any counseling begins. For more details, please refer to our paper.
@@ -156,8 +158,27 @@ We utilize the consistent client simulation methodology developed in our previou
 
 *Note: Results of expert evaluation. CAMI outperforms CoS and LQ counselors but a gap still exists between CAMI and HQ counselors. Note that the maximum score of "Evoking Change Talk" is 3, while that of other criteria is 5.*
 
+## Topic Graph and Retrieval-based Topic Perception
+
+Through observation, it has been identified that certain topics can be related to multiple parents, such as Child Custody, which is related to both Law and Family. Consequently, we expand the topic tree structure to represent these relationships as a topic graph.
+
+![](./figures/topic_graph.png)
+
+Furthermore, based on our experiment, we have observed that the topic perception capability of LLMs (specifically, GPT-4o-2024-11-20) is limited when the accuracy of topic prediction is low. To address this limitation, we leverage the design of our topics, which are related to Wikipedia, and employ a retrieval-based method to rank topics. This method compares the current session topic with corresponding Wikipedia passages to determine the most relevant topics. Based on automatic metrics and human inspection, the retrieval-based method can provide more relevant topics, and we employ the top-1 topic recommended by BGE-ReRanker as the perceived topic of the client.
+
+
+|                          | ACC/Recall@N   |
+|--------------------------|----------------|
+| LLM Prediction           | 7.37%          |
+| BGE-ReRank Top 1         | 58.95%         |
+| BGE-ReRank Top 3         | 90.18%         |
+| BGE-ReRank Top 5         | 94.97%         |
+| BGE-ReRank Top 5 + LLM   | 40.39%         |
+
+Additionally, we utilize the Dijkstra algorithm to calculate the distance between the current session topic and the motivation topic. To enhance the accuracy of the distance estimation and engagement adjustment, we assign different values to the edges between different levels of the topic hierarchy. For instance, the distance between two superclass topics is set to 3, while the distance between a superclass topic and a coarse-grained topic under it is set to 2.
+
+
 ## TODO
-- [ ] Upload the annotation scripts
 - [ ] Upload the citation information
 
 
