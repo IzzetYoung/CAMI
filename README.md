@@ -22,7 +22,7 @@ export OPENAI_API_KEY=      # Your OpenAI API KEY
 export OPENAI_BASE_URL=     # Your OpenAI BASE URL
 python src/generate.py \
     # GPT model you want to use
-    --model gpt-4o-mini \
+    --model gpt-4o \
     # Path to the profiles.jsonl file
     --profile_path ./annotations/profiles.jsonl \
     # Output directory to save the generated conversations
