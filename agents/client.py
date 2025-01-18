@@ -99,6 +99,7 @@ class Client:
         plans,
         receptivity,
         model,
+        wikipedia_dir="../wikipedias/",
         retriever_path="../models/bge-reranker-v2-m3"
     ):
         self.goal = goal
@@ -558,7 +559,7 @@ class Client:
                     self.all_topics.append(node)
         self.passages = []
         for topic in self.all_topics:
-            with open(os.path.join("./wikipedias/", topic), "r") as f:
+            with open(os.path.join(wikipedia_dir, topic), "r") as f:
                 self.passages.append(self.topic2description[topic] + f.read())
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.retriever_tokenizer = AutoTokenizer.from_pretrained(

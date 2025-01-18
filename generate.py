@@ -10,19 +10,21 @@ if __name__ == "__main__":
 
     parser.add_argument("--model", type=str, help="OpenAI model to use for the agents")
     parser.add_argument("--retriever_path", type=str, help="The retriever model to use in client simulation.")
+    parser.add_argument("--wikipedia_dir", default="./wikipedias", type=str, help="The directory containing the wikipedia articles.")
     parser.add_argument(
-        "--profile_path", type=str, help="Path to the profiles.jsonl file"
+        "--profile_path", default="./annotations/profile.jsonl", type=str, help="Path to the profiles.jsonl file"
     )
     parser.add_argument(
         "--output_dir",
         type=str,
+        default="./Output",
         help="Output directory to save the generated conversations",
     )
     parser.add_argument(
-        "--round", type=int, help="Number of rounds to run the simulation"
+        "--round", type=int, default=5, help="Number of rounds to run the simulation"
     )
     parser.add_argument(
-        "--max_turns", type=int, help="Maximum number of turns for each conversation"
+        "--max_turns", type=int, default=20, help="Maximum number of turns for each conversation"
     )
 
     args = parser.parse_args()
@@ -65,6 +67,8 @@ if __name__ == "__main__":
                 plans=sample["Acceptable Plans"],
                 receptivity=sum(sample["suggestibilities"])
                 / len(sample["suggestibilities"]),
+                model=args.model,
+                wikipedia_dir=args.wikipedia_dir,
                 retriever_path=args.retriever_path,
             )
             env = Env(
