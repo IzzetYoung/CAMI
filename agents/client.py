@@ -99,6 +99,7 @@ class Client:
         plans,
         receptivity,
         model,
+        retriever_path="../models/bge-reranker-v2-m3"
     ):
         self.goal = goal
         self.behavior = behavior
@@ -561,10 +562,10 @@ class Client:
                 self.passages.append(self.topic2description[topic] + f.read())
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.retriever_tokenizer = AutoTokenizer.from_pretrained(
-            "../models/bge-reranker-v2-m3"
+            retriever_path
         )
         self.retriever = AutoModelForSequenceClassification.from_pretrained(
-            "../models/bge-reranker-v2-m3"
+            retriever_path
         ).to(device)
         self.retriever.eval()
 
@@ -994,7 +995,7 @@ Is there a question in the last utterance of Counselor? Yes or No"""
         self.messages.append(
             {"role": "user", "content": f"{self.context[-1]} {instruction}"}
         )
-        response = get_chatbot_response(self.messages)
+        response = get_chatbot_response(self.messages, model=self.model)
         if not response.startswith("Client: "):
             response = f"Client: {response}"
         response = response.replace("\n", " ").strip().lstrip()

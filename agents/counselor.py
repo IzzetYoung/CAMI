@@ -1100,7 +1100,8 @@ Please limit the word count to no more than 50 words!!!
                 .replace("[@strategy]", strategy)
             )
             feedback = get_precise_response(
-                messages=[{"role": "user", "content": temp_feedback_prompt}]
+                messages=[{"role": "user", "content": temp_feedback_prompt}],
+                model=self.model
             )
             score = re.search(r"Total Score: (\d+)/10", feedback)
             if score and int(score.group(1)) > 7:
@@ -1113,7 +1114,8 @@ Please limit the word count to no more than 50 words!!!
                 .replace("[@feedback]", feedback)
             )
             response = get_chatbot_response(
-                messages=[{"role": "user", "content": temp_refine_prompt}]
+                messages=[{"role": "user", "content": temp_refine_prompt}],
+                model=self.model,
             )
             for r in response.split("\n"):
                 if r.startswith("- Counselor:"):

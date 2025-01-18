@@ -9,6 +9,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--model", type=str, help="OpenAI model to use for the agents")
+    parser.add_argument("--retriever_path", type=str, help="The retriever model to use in client simulation.")
     parser.add_argument(
         "--profile_path", type=str, help="Path to the profiles.jsonl file"
     )
@@ -64,6 +65,7 @@ if __name__ == "__main__":
                 plans=sample["Acceptable Plans"],
                 receptivity=sum(sample["suggestibilities"])
                 / len(sample["suggestibilities"]),
+                retriever_path=args.retriever_path,
             )
             env = Env(
                 client=client,
