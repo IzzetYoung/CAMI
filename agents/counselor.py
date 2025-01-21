@@ -122,7 +122,7 @@ At the core of MI are a few basic principles, including expressing empathy and d
             "Inflammation": f"You can explore how {behavior} leads to chronic inflammation, increasing the risk of diseases like arthritis, heart disease, or diabetes. You can also highlight how {goal} helps reduce inflammation and supports long-term health.",
             "Liver Disease": f"You can explore how {behavior} contributes to liver damage, raising the risk of conditions such as fatty liver disease, cirrhosis, or liver cancer. You can also discuss how {goal} promotes liver health, prevents damage, and reduces the likelihood of chronic liver conditions.",
             "Lung Cancer": f"You can explore how {behavior} increases the risk of lung cancer and other respiratory diseases. You can also emphasize how {goal} lowers the risk of cancer, improves lung function, and enhances overall respiratory health.",
-            "Chronic Obstructive Pulmonary Disease": f"You can explore how {behavior} may contribute to the development or worsening of COPD, leading to breathing difficulties and other respiratory issues. You can also discuss how {goal} improves lung function and overall respiratory health.",
+            "COPD": f"You can explore how {behavior} may contribute to the development or worsening of COPD, leading to breathing difficulties and other respiratory issues. You can also discuss how {goal} improves lung function and overall respiratory health.",
             "Asthma": f"You can explore how {behavior} triggers or worsens asthma symptoms, increasing the risk of severe attacks. You can also highlight how {goal} helps manage asthma, reduces symptoms, and improves the client's quality of life.",
             "Stroke": f"You can explore how {behavior} increases the risk of stroke, particularly through poor cardiovascular health. You can also discuss how {goal} improves circulation, reduces stroke risk, and supports brain and heart health.",
             "Diabetes": f"You can explore how {behavior} contributes to the development or worsening of diabetes by affecting blood sugar levels. You can also discuss how {goal} helps manage blood sugar, prevent complications, and enhance overall well-being.",
@@ -185,15 +185,13 @@ At the core of MI are a few basic principles, including expressing empathy and d
             "Family": f"You can explore how {behavior} leads to family issues, such as estrangement, disruption, or divorce. You can also discuss how {goal} promotes healthier family relationships and reconciliation. Subtopics include family estrangement, family disruption, and divorce.",
             "Parenting": f"You can explore how {behavior} impacts the client's ability to effectively parent, such as being a poor role model or affecting their child’s development. You can also discuss how {goal} enhances positive parenting, strengthens the parent-child bond, and supports healthier child development. Subtopics include role model, child development, paternal bond, child care, and habituation.",
             "Criminal Law": f"You can explore how {behavior} leads to issues like arrests, imprisonment, or legal complaints. You can also discuss how {goal} helps avoid these legal problems and supports a law-abiding lifestyle. Subtopics include arrest, imprisonment, and complaint.",
-            "Family Law": f"You can explore how {behavior} affects legal matters involving family, such as child custody disputes. You can also discuss how {goal} improves the client’s legal standing and promotes healthier family relationships.",
-            "Traffic Law": f"You can explore how {behavior} may lead to traffic violations, such as receiving tickets or facing fines. You can also discuss how {goal} encourages responsible driving and helps avoid legal infractions.",
             "Student Affairs": f"You can explore how {behavior} impacts school attendance, potentially leading to disciplinary actions such as suspension. You can also discuss how {goal} promotes better academic engagement and achievement. Subtopics include attendance, suspension, and scholarship.",
-            "Assessment": f"You can explore how {behavior} negatively affects academic performance during assessments, such as exams. You can also discuss how {goal} helps improve focus, study habits, and exam results.",
             "Health": f"You can explore how {behavior} impacts your client's physical and mental well-being, leading to potential health issues. You can also discuss the benefits of {goal}, which can improve overall quality of life and promote better health outcomes.",
             "Economy": f"You can explore how {behavior} affects your client's financial situation, such as through reduced productivity, increased absenteeism, or poor financial management. You can also discuss how {goal} helps improve economic stability and workplace performance.",
             "Interpersonal Relationships": f"You can explore how {behavior} affects your client’s personal relationships, leading to family strain or issues with parenting. You can also discuss how {goal} strengthens relationships and fosters a healthier family dynamic.",
             "Law": f"You can explore how {behavior} increases legal risks, such as arrests, imprisonment, or traffic violations. You can also discuss how {goal} helps reduce legal troubles and promotes a more responsible approach to law.",
             "Education": f"You can explore how {behavior} interferes with your client’s educational progress, leading to issues like poor attendance, suspension, or missed academic opportunities. You can also discuss how {goal} fosters better academic performance and overall success.",
+            "Academic Achievement": f"You can explore how {behavior} affects GPA, potentially leading to academic probation or reduced learning outcomes. You can also discuss how {goal} enhances academic standing."
         }
         first_counselor = """Counselor: Hello. How are you?"""
         first_client = """Client: I am good. What about you?"""
@@ -224,86 +222,83 @@ At the core of MI are a few basic principles, including expressing empathy and d
             "Structure": "Give comments made to explain what is going to happen in the session, to make a transition from one part of a session to another, to help the client anticipate what will happen next, etc. For example, 'First, let’s discuss your drinking, and then we can explore other issues.'",
             "No Strategy": "Say something not related to behavior change. For example, 'Good morning!'",
         }
-        self.topic_tree = {
-            "Health": {
-                "Diseases": [
-                    "Infection",
-                    "Hypertension",
-                    "Flu",
-                    "Inflammation",
-                    "Liver Disease",
-                    "Lung Cancer",
-                    "Chronic Obstructive Pulmonary Disease",
-                    "Asthma",
-                    "Stroke",
-                    "Diabetes",
-                ],
-                "Physical Fitness": [
-                    "Physical Activity",
-                    "Sport",
-                    "Physical Fitness",
-                    "Strength",
-                    "Flexibility",
-                    "Endurance",
-                ],
-                "Health Care": [
-                    "Dentistry",
-                    "Caregiver Burden",
-                    "Independent Living",
-                    "Human Appearance",
-                ],
-                "Mental Disorders": [
-                    "Depression",
-                    "Chronodisruption",
-                    "Anxiety Disorders",
-                    "Cognitive Decline",
-                ],
-                "Sexual Health": [
-                    "Safe Sex",
-                    "Maternal Health",
-                    "Preterm Birth",
-                    "Miscarriage",
-                    "Birth Defects",
-                ],
-            },
-            "Economy": {
-                "Employment": [
-                    "Productivity",
-                    "Absenteeism",
-                    "Workplace Relationships",
-                    "Career Break",
-                    "Career Assessment",
-                    "Absence Rate",
-                    "Salary",
-                    "Workplace Wellness",
-                    "Workplace Incivility",
-                ],
-                "Personal Finance": [
-                    "Cost of Living",
-                    "Personal Budget",
-                    "Debt",
-                    "Income Deficit",
-                ],
-            },
-            "Interpersonal Relationships": {
-                "Family": ["Family Estrangement", "Family Disruption", "Divorce"],
-                "Parenting": [
-                    "Role Model",
-                    "Child Development",
-                    "Paternal Bond",
-                    "Child Care",
-                    "Habituation",
-                ],
-            },
-            "Law": {
-                "Criminal Law": ["Arrest", "Imprisonment", "Complaint"],
-                "Family Law": ["Child Custody"],
-                "Traffic Law": ["Traffic Ticket"],
-            },
-            "Education": {
-                "Student Affairs": ["Attendance", "Suspension", "Scholarship"],
-                "Assessment": ["Exam"],
-            },
+        self.topic_graph = {
+            "Health": {"Parent": [], "Children": ["Mental Disorders", "Diseases", "Sexual Health", "Fitness", "Health Care", "Workplace Wellness"]},
+            "Interpersonal Relationships": {"Parent": [], "Children": ["Family", "Parenting", "Workplace Relationships"]},
+            "Law": {"Parent": [], "Children": ["Criminal Law", "Child Custody", "Traffic Ticket"]},
+            "Economy": {"Parent": [], "Children": ["Employment", "Personal Finance"]},
+            "Education": {"Parent": [], "Children": ["Student Affairs", "Exam", "Academic Achievement"]},
+            "Mental Disorders": {"Parent": ["Health"], "Children": ["Depression", "Chronodisruption", "Anxiety Disorders", "Cognitive Decline"]},
+            "Diseases": {"Parent": ["Health"], "Children": ["Infection", "Hypertension", "Flu", "Inflammation", "Liver Disease", "Lung Cancer", "COPD", "Asthma", "Stroke", "Diabetes", "Stroke", "Inflammation"]},
+            "Sexual Health": {"Parent": ["Health"], "Children": ["Birth Defects", "Maternal Health", "Preterm Birth", "Miscarriage", "Safe Sex"]},
+            "Fitness": {"Parent": ["Health"], "Children": ["Physical Activity", "Sport", "Physical Fitness", "Strength", "Flexibility", "Endurance"]},
+            "Health Care": {"Parent": ["Health"], "Children": ["Dentistry", "Caregiver Burden", "Independent Living", "Human Appearance", "Child Care", "Maternal Health"]},
+            "Parenting": {"Parent": ["Interpersonal Relationships"], "Children": ["Role Model", "Child Development", "Paternal Bond", "Child Care", "Habituation", "Child Custody"]},
+            "Family": {"Parent": ["Interpersonal Relationships"], "Children": ["Family Estrangement", "Family Disruption", "Divorce", "Child Custody"]},
+            "Criminal Law": {"Parent": ["Law"], "Children": ["Arrest", "Imprisonment", "Complaint"]},
+            "Personal Finance": {"Parent": ["Economy"], "Children": ["Cost of Living", "Personal Budget", "Debt", "Income Deficit"]},
+            "Employment": {"Parent": ["Economy"], "Children": ["Productivity", "Absenteeism", "Workplace Relationships", "Career Break", "Career Assessment", "Absence Rate", "Salary", "Workplace Wellness", "Workplace Incivility"]},
+            "Student Affairs": {"Parent": ["Education"], "Children": ["Attendance", "Suspension", "Exam", "Scholarship"]},
+            "Cognitive Decline": {"Parent": ["Mental Disorders"], "Children": []},
+            "Chronodisruption": {"Parent": ["Mental Disorders"], "Children": []},
+            "Depression": {"Parent": ["Mental Disorders"], "Children": []},
+            "Anxiety Disorders": {"Parent": ["Mental Disorders"], "Children": []},
+            "Infection": {"Parent": ["Diseases"], "Children": []},
+            "Diabetes": {"Parent": ["Diseases"], "Children": []},
+            "Hypertension": {"Parent": ["Diseases"], "Children": []},
+            "Liver Disease": {"Parent": ["Diseases"], "Children": []},
+            "COPD": {"Parent": ["Diseases"], "Children": []},
+            "Asthma": {"Parent": ["Diseases"], "Children": []},
+            "Flu": {"Parent": ["Diseases"], "Children": []},
+            "Lung Cancer": {"Parent": ["Diseases"], "Children": []},
+            "Stroke": {"Parent": ["Diseases"], "Children": []},
+            "Inflammation": {"Parent": ["Diseases"], "Children": []},
+            "Birth Defects": {"Parent": ["Sexual Health"], "Children": []},
+            "Preterm Birth": {"Parent": ["Sexual Health"], "Children": []},
+            "Safe Sex": {"Parent": ["Sexual Health"], "Children": []},
+            "Miscarriage": {"Parent": ["Sexual Health"], "Children": []},
+            "Maternal Health": {"Parent": ["Sexual Health", "Health Care"], "Children": []},
+            "Strength": {"Parent": ["Fitness"], "Children": []},
+            "Physical Fitness": {"Parent": ["Fitness"], "Children": []},
+            "Flexibility": {"Parent": ["Fitness"], "Children": []},
+            "Physical Activity": {"Parent": ["Fitness"], "Children": []},
+            "Sport": {"Parent": ["Fitness"], "Children": []},
+            "Endurance": {"Parent": ["Fitness"], "Children": []},
+            "Caregiver Burden": {"Parent": ["Health Care"], "Children": []},
+            "Independent Living": {"Parent": ["Health Care"], "Children": []},
+            "Human Appearance": {"Parent": ["Health Care"], "Children": []},
+            "Dentistry": {"Parent": ["Health Care"], "Children": []},
+            "Child Care": {"Parent": ["Health Care", "Parenting"], "Children": []},
+            "Paternal Bond": {"Parent": ["Parenting"], "Children": []},
+            "Role Model": {"Parent": ["Parenting"], "Children": []},
+            "Habituation": {"Parent": ["Parenting"], "Children": []},
+            "Child Development": {"Parent": ["Parenting"], "Children": []},
+            "Family Disruption": {"Parent": ["Family"], "Children": []},
+            "Divorce": {"Parent": ["Family"], "Children": []},
+            "Family Estrangement": {"Parent": ["Family"], "Children": []},
+            "Child Custody": {"Parent": ["Family", "Parenting", "Law"], "Children": []},
+            "Traffic Ticket": {"Parent": ["Law"], "Children": []},
+            "Imprisonment": {"Parent": ["Criminal Law"], "Children": []},
+            "Complaint": {"Parent": ["Criminal Law"], "Children": []},
+            "Arrest": {"Parent": ["Criminal Law"], "Children": []},
+            "Personal Budget": {"Parent": ["Personal Finance"], "Children": []},
+            "Debt": {"Parent": ["Personal Finance"], "Children": []},
+            "Cost of Living": {"Parent": ["Personal Finance"], "Children": []},
+            "Income Deficit": {"Parent": ["Personal Finance"], "Children": []},
+            "Workplace Wellness": {"Parent": ["Health", "Employment"], "Children": []},
+            "Workplace Incivility": {"Parent": ["Employment"], "Children": []},
+            "Workplace Relationships": {"Parent": ["Employment", "Interpersonal Relationships"], "Children": []},
+            "Salary": {"Parent": ["Employment"], "Children": []},
+            "Career Break": {"Parent": ["Employment"], "Children": []},
+            "Absence Rate": {"Parent": ["Employment"], "Children": []},
+            "Career Assessment": {"Parent": ["Employment"], "Children": []},
+            "Absenteeism": {"Parent": ["Employment"], "Children": []},
+            "Productivity": {"Parent": ["Employment"], "Children": []},
+            "Academic Achievement": {"Parent": ["Education"], "Children": []},
+            "Exam": {"Parent": ["Education"], "Children": []},
+            "Suspension": {"Parent": ["Student Affairs"], "Children": []},
+            "Attendance": {"Parent": ["Student Affairs"], "Children": []},
+            "Scholarship": {"Parent": ["Student Affairs"], "Children": []}
         }
         self.explored_topics = []
         self.conversation = [first_counselor, first_client]
@@ -495,7 +490,7 @@ The client acknowledges feeling groggy after using weed but downplays its signif
 ### Background
 - Counseling Goal: smoking cessation
 - Client's Behavior: smoking
-- Topic Mentioned: Health -> Finance --> Interpersonal Relationship
+- Topic Mentioned: Health -> Finance --> Interpersonal Relationships
 
 ### Client's Response
 - Client: That's an interesting thought. I guess there are other ways to unwind, like going for a hike or just grabbing coffee. But sometimes, it feels good to stick with what I know. Change can be tricky, you know? It’s all about finding that balance, I suppose.
@@ -567,7 +562,7 @@ The client acknowledges feeling groggy after using weed but downplays its signif
 ### Background
 - Counseling Goal: smoking cessation
 - Client's Behavior: smoking
-- Topic Mentioned: Health -> Finance --> Interpersonal Relationship
+- Topic Mentioned: Health -> Finance --> Interpersonal Relationships
 
 ### Client's Response
 - Client: That's an interesting thought. I guess there are other ways to unwind, like going for a hike or just grabbing coffee. But sometimes, it feels good to stick with what I know. Change can be tricky, you know? It’s all about finding that balance, I suppose.
@@ -631,7 +626,7 @@ The client acknowledges that there are other ways to unwind, such as going for a
 ### Background
 - Counseling Goal: reducing alcohol consumption
 - Client's Behavior: drinking
-- Topic Mentioned: Health --> Interpersonal Relationship
+- Topic Mentioned: Health --> Interpersonal Relationships
 
 ### Client's Response
 - Client: I see what you mean about deeper connections. I’ve always enjoyed the social aspect of having a drink, but I also want to be mindful of my health. It's just that at gatherings, it feels like a part of the tradition. Change can be a bit daunting.
@@ -662,7 +657,7 @@ The client is reflecting on the balance between social drinking and health. Whil
 ### Background
 - Counseling Goal: reducing drug use
 - Client's Behavior: drug use
-- Topic Mentioned: Interpersonal Relationship --> Family
+- Topic Mentioned: Interpersonal Relationships --> Family
 
 ### Client's Response
 - Client: Yeah, the family is a bit different. They’re not really into that scene, so they don’t get it. I guess there’s some tension, but I focus on my friends instead. Life’s just busy, and there’s so much to balance. Just trying to figure it all out, you know?
@@ -707,8 +702,8 @@ Looking at the client's response, we can see they're touching on family tensions
         prompt = prompt.replace("[@topics]", " -> ".join(self.explored_topics))
         step_in_topics, switch_topics, step_out_topics = None, None, None
         if len(self.topic_stack) == 1:
-            step_in_topics = [*self.topic_tree[self.topic_stack[0]].keys()]
-            switch_topics = [*self.topic_tree.keys()]
+            step_in_topics = self.topic_graph[self.topic_stack[0]]["Children"].copy()
+            switch_topics = ["Health", "Interpersonal Relationships", "Law", "Economy", "Education"]
             prompt += """You have two options:
 1. Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including:
     - [@step_in_topics]
@@ -724,11 +719,9 @@ Please analyze the client's feedback toward the current situation and then choos
             )
             prompt = prompt.replace("[@switch_topics]", "\n    - ".join(switch_topics))
         elif len(self.topic_stack) == 2:
-            step_in_topics = self.topic_tree[self.topic_stack[0]][
-                self.topic_stack[1]
-            ].copy()
-            switch_topics = [*self.topic_tree[self.topic_stack[0]].keys()]
-            step_out_topics = [*self.topic_tree.keys()]
+            step_in_topics = self.topic_graph[self.topic_stack[1]]["Children"].copy()
+            switch_topics = self.topic_graph[self.topic_stack[0]]["Children"].copy()
+            step_out_topics = ["Health", "Interpersonal Relationships", "Law", "Economy", "Education"]
             prompt += """You have three options:
 - Step Into: If the client shows interest in this topic, you should dive deeper into its subtopics, including:
     - [@step_in_topics]
@@ -749,10 +742,8 @@ Please analyze the client's feedback toward the current situation and then choos
                 "[@step_out_topics]", "\n    - ".join(step_out_topics)
             )
         elif len(self.topic_stack) == 3:
-            switch_topics = self.topic_tree[self.topic_stack[0]][
-                self.topic_stack[1]
-            ].copy()
-            step_out_topics = [*self.topic_tree[self.topic_stack[0]].keys()]
+            switch_topics = self.topic_graph[self.topic_stack[1]]["Children"].copy()
+            step_out_topics = self.topic_graph[self.topic_stack[0]]["Children"].copy()
             if len(step_out_topics) != 0:
                 prompt += """You have two options:
 - Switch: If the client is interested in the broader category but not this specific topic, switch to another related topic under the same super topic, including:

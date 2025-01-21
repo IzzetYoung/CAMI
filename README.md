@@ -20,11 +20,11 @@ Ee-Peng Lim<sup>2</sup>
 ```zsh
 export OPENAI_API_KEY=      # Your OpenAI API KEY
 export OPENAI_BASE_URL=     # Your OpenAI BASE URL
-python src/generate.py \
+python generate.py \
     # GPT model you want to use
     --model gpt-4o \
     # Retriever model you want to use
-    --retriever_path BAAI/bge-reranker-v2.5-gemma2-lightweight \
+    --retriever_path BAAI/bge-reranker-v2-m3 \
     # Path to the profiles.jsonl file
     --profile_path ./annotations/profiles.jsonl \
     # Output directory to save the generated conversations

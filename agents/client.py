@@ -24,7 +24,7 @@ openai_client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
         openai.APIStatusError,
     ),
 )
-def get_precise_response(messages, model="gpt-4o", temperature=0.2, top_p=0.1):
+def get_precise_response(messages, model="gpt-3.5-turbo-0125", temperature=0.2, top_p=0.1):
     message = openai_client.chat.completions.create(
         model=model,
         messages=messages,
@@ -45,7 +45,7 @@ def get_precise_response(messages, model="gpt-4o", temperature=0.2, top_p=0.1):
     ),
 )
 def get_chatbot_response(
-    messages, model="gpt-4o", temperature=0.7, top_p=0.8, max_tokens=100
+    messages, model="gpt-3.5-turbo-0125", temperature=0.7, top_p=0.8, max_tokens=100
 ):
     message = openai_client.chat.completions.create(
         model=model,
@@ -67,7 +67,7 @@ def get_chatbot_response(
         openai.APIStatusError,
     ),
 )
-def get_json_response(messages, model="gpt-4o", temperature=0.2, top_p=0.1):
+def get_json_response(messages, model="gpt-3.5-turbo-0125", temperature=0.2, top_p=0.1):
     message = openai_client.chat.completions.create(
         model=model,
         messages=messages,
@@ -99,8 +99,8 @@ class Client:
         plans,
         receptivity,
         model,
-        wikipedia_dir="../wikipedias/",
-        retriever_path="../models/bge-reranker-v2-m3"
+        wikipedia_dir,
+        retriever_path
     ):
         self.goal = goal
         self.behavior = behavior
@@ -146,7 +146,7 @@ class Client:
             "Inflammation": f"When discussing [topic], The counselor may address how {self.behavior} can lead to chronic inflammation in your body, increasing your risk for related health conditions. They may also discuss how {self.goal} can help reduce inflammation and promote better long-term health.",
             "Liver Disease": f"When discussing [topic], The counselor may explore how {self.behavior} can cause liver damage, increasing your risk of liver disease. They may also discuss how {self.goal} can protect your liver, prevent damage, and lower your chances of developing serious liver conditions.",
             "Lung Cancer": f"When discussing [topic], The counselor may discuss how {self.behavior} can increase your risk of developing lung cancer. They may also highlight how {self.goal} can reduce your risk of lung cancer and improve your overall respiratory health.",
-            "Chronic Obstructive Pulmonary Disease (COPD)": f"When discussing [topic], The counselor may explore how {self.behavior} can worsen symptoms of COPD, making it harder for you to breathe. They may also explain how {self.goal} can improve your lung function and help manage COPD symptoms.",
+            "COPD": f"When discussing [topic], The counselor may explore how {self.behavior} can worsen symptoms of COPD, making it harder for you to breathe. They may also explain how {self.goal} can improve your lung function and help manage COPD symptoms.",
             "Asthma": f"When discussing [topic], The counselor may explain how {self.behavior} can trigger or worsen asthma attacks. They may also discuss how {self.goal} can help control asthma symptoms and improve your ability to manage the condition.",
             "Stroke": f"When discussing [topic], The counselor may address how {self.behavior} can increase your risk of stroke by negatively impacting your cardiovascular health. They may also highlight how {self.goal} can help reduce this risk and support a healthier cardiovascular system.",
             "Diabetes": f"When discussing [topic], The counselor may explore how {self.behavior} can contribute to the development or worsening of diabetes. They may also discuss how {self.goal} can help manage your blood sugar levels and reduce the risk of diabetes-related complications.",
@@ -217,7 +217,7 @@ class Client:
             "Traffic Law": f"When discussing [topic], The counselor may talk about how {self.behavior} increases your chances of receiving traffic tickets or fines. The counselor can also discuss how {self.goal} can help you drive responsibly and avoid future violations.",
             "Education": f"When discussing [topic], The counselor may talk about how {self.behavior} affects your academic performance and opportunities, such as attendance, exam results, or scholarship eligibility. They may focus on how these behaviors hinder your educational success. The counselor can also discuss how {self.goal} can help you improve your academic performance and stay engaged in school.",
             "Student Affairs": f"When discussing [topic], The counselor may talk about how {self.behavior} impacts your attendance, causes suspensions, or affects your eligibility for scholarships. The counselor can also discuss how {self.goal} can help improve your participation and academic success.",
-            "Assessment": f"When discussing [topic], The counselor may talk about how {self.behavior} affects your preparation for exams and your overall performance. The counselor can also discuss how {self.goal} can help you improve your focus and achieve better exam results.",
+            "Academic Achievement": f"When discussing [topic], The counselor may talk about how {self.behavior} affects your academic performance or productivity in study. The counselor can also discuss how {self.goal} can help you achieve better grades and academic success.",
         }
 
         self.topic_graph = {
@@ -687,7 +687,7 @@ Question: Can the Counselor's statement motivate the Client?
 
     def top5_related_topics(self):
         query = self.context[-1].split("Counselor: ")[-1]
-        queries = [query] * len(self.topics)
+        queries = [query] * len(self.all_topics)
         query_evids = zip(queries, self.passages)
         with torch.no_grad():
             inputs = self.retriever_tokenizer(
@@ -710,7 +710,7 @@ Question: Can the Counselor's statement motivate the Client?
         top_5_indices = sorted(
             range(len(scores)), key=lambda i: scores[i], reverse=True
         )[:5]
-        top5_topics = [self.topics[idx] for idx in top_5_indices]
+        top5_topics = [self.all_topics[idx] for idx in top_5_indices]
         return top5_topics
 
     def dijkstra(self, graph, start_node, target_node):
@@ -761,13 +761,13 @@ Question: Can the Counselor's statement motivate the Client?
         else:
             top_topics = self.top5_related_topics()
             predicted_topic = top_topics[0]
-            if predicted_topic == self.interested_topics[0]:
+            if predicted_topic == self.engagemented_topics[0]:
                 self.engagement = 4
                 self.error_topic_count = 0
                 motivation_analysis = self.verify_motivation()
                 return motivation_analysis
             distance = self.dijkstra(
-                self.topic_graph, self.interested_topics[0], predicted_topic
+                self.topic_graph, self.engagemented_topics[0], predicted_topic
             )
             if distance <= 3:
                 self.engagement = 3
@@ -938,59 +938,52 @@ Is there a question in the last utterance of Counselor? Yes or No"""
             return f"Offer specific responses that affirm the counselor is on the right track, showing that you're motivated by {self.engagemented_topics[0]}. {self.motivation}"
 
     def reply(self):
-        if self.state == self.final_stage:
-            action = "Terminate"
-            instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} Don't show overknowledge, and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-            output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Action Instruction: {self.action2prompt[action]}]"
-        else:
-            engagement_analysis = self.update_state()
-            information = None
-            if self.state == "Motivation":
-                engage_instruction = f"Offer specific responses that affirm the counselor is on the right track, showing that you're motivated by {self.interested_topics[0]}."
-                instruction = f"[{self.motivation} {self.action2prompt['Acknowledge']} {engage_instruction}]"
-                output_instruction = f"[Engagement: {engage_instruction} || Motivation: {self.motivation} || Action: {self.action2prompt['Acknowledge']}]"
-                self.state = "Contemplation"
-                action = "Acknowledge"
-            elif self.state == "Precontemplation":
-                engage_instruction = self.get_engage_instruction()
-                if self.error_topic_count >= 5:
-                    action = "Terminate"
-                else:
-                    action = self.select_action()
-                if action == "Inform" or action == "Downplay" or action == "Blame":
-                    information = self.select_information(action)
-                    instruction = f"[{engage_instruction} {self.state2prompt[self.state]} {self.action2prompt[action]} You should follow the persona: {information} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-                    output_instruction = f"[Engage Instruction: {engagement_analysis} {engage_instruction} || State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
-                else:
-                    instruction = f"[{engage_instruction} {self.state2prompt[self.state]} {self.action2prompt[action]} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-                    output_instruction = f"[Engage Instruction: {engagement_analysis} {engage_instruction} || State Instruction: {self.state2prompt[self.state]} || Action Instruction: {self.action2prompt[action]}]"
-            elif self.state == "Contemplation":
-                action = self.select_action()
-                if action == "Hesitate" or action == "Inform":
-                    information = self.select_information(action)
-                    information = self.convert_subject(information)
-                    instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} You should follow the persona: {information} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-                    output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
-                else:
-                    instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-                    output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Action Instruction: {self.action2prompt[action]}]"
+        engagement_analysis = self.update_state()
+        information = None
+        if self.state == "Motivation":
+            engage_instruction = f"Offer specific responses that affirm the counselor is on the right track, showing that you're motivated by {self.engagemented_topics[0]}."
+            instruction = f"[{self.motivation} {self.action2prompt['Acknowledge']} {engage_instruction}]"
+            output_instruction = f"[Engagement: {engage_instruction} || Motivation: {self.motivation} || Action: {self.action2prompt['Acknowledge']}]"
+            self.state = "Contemplation"
+            action = "Acknowledge"
+        elif self.state == "Precontemplation":
+            engage_instruction = self.get_engage_instruction()
+            if self.error_topic_count >= 5:
+                action = "Terminate"
             else:
-                if len(self.acceptable_plans) == 0:
-                    action = "Terminate"
-                else:
-                    action = self.select_action()
-                if action == "Inform":
-                    information = self.select_information(action)
-                    information = self.convert_subject(information)
-                    instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} You should follow the persona: {information} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-                    output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
-                if action == "Plan":
-                    information = self.acceptable_plans.pop(0)
-                    instruction = f"[{self.state2prompt[self.state]} {information} {self.action2prompt[action]} Don't show overknowledge, and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-                    output_instruction = f"State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
-                else:
-                    instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} Don't show overknowledge, and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
-                    output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Action Instruction: {self.action2prompt[action]}]"
+                action = self.select_action()
+            if action == "Inform" or action == "Downplay" or action == "Blame":
+                information = self.select_information(action)
+                instruction = f"[{engage_instruction} {self.state2prompt[self.state]} {self.action2prompt[action]} You should follow the persona: {information} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
+                output_instruction = f"[Engage Instruction: {engagement_analysis} {engage_instruction} || State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
+            else:
+                instruction = f"[{engage_instruction} {self.state2prompt[self.state]} {self.action2prompt[action]} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
+                output_instruction = f"[Engage Instruction: {engagement_analysis} {engage_instruction} || State Instruction: {self.state2prompt[self.state]} || Action Instruction: {self.action2prompt[action]}]"
+        elif self.state == "Contemplation":
+            action = self.select_action()
+            if action == "Hesitate" or action == "Inform":
+                information = self.select_information(action)
+                instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} You should follow the persona: {information} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
+                output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
+            else:
+                instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
+                output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Action Instruction: {self.action2prompt[action]}]"
+        else:
+            if len(self.acceptable_plans) == 0:
+                action = "Terminate"
+            else:
+                action = self.select_action()
+            if action == "Inform":
+                information = self.select_information(action)
+                instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} You should follow the persona: {information} Don't show overknowledge and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
+                output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
+            if action == "Plan":
+                information = self.acceptable_plans.pop(0)
+                instruction = f"[{self.state2prompt[self.state]} {information} {self.action2prompt[action]} Don't show overknowledge, and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
+                output_instruction = f"State Instruction: {self.state2prompt[self.state]} || Information: {information} || Action Instruction: {self.action2prompt[action]}]"
+            else:
+                instruction = f"[{self.state2prompt[self.state]} {self.action2prompt[action]} Don't show overknowledge, and keep your responses concise (no more than 50 words). Don't highlight your state explicitly.]"
+                output_instruction = f"[State Instruction: {self.state2prompt[self.state]} || Action Instruction: {self.action2prompt[action]}]"
         instruction = instruction.replace("\n", " ")
         output_instruction = output_instruction.replace("\n", " ")
         self.messages.append(

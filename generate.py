@@ -12,7 +12,7 @@ if __name__ == "__main__":
     parser.add_argument("--retriever_path", type=str, help="The retriever model to use in client simulation.")
     parser.add_argument("--wikipedia_dir", default="./wikipedias", type=str, help="The directory containing the wikipedia articles.")
     parser.add_argument(
-        "--profile_path", default="./annotations/profile.jsonl", type=str, help="Path to the profiles.jsonl file"
+        "--profile_path", default="./annotations/profiles.jsonl", type=str, help="Path to the profiles.jsonl file"
     )
     parser.add_argument(
         "--output_dir",
