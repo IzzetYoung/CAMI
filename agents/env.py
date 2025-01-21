@@ -43,6 +43,8 @@ class Env:
                 print(context)
 
     def output(self, utterance):
+        if not os.path.exists(os.path.dirname(self.output_file)):
+            os.makedirs(os.path.dirname(self.output_file))
         if self.output_file:
             self.output_file.write(utterance + "\n")
         else:
