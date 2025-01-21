@@ -24,7 +24,7 @@ openai_client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
         openai.APIStatusError,
     ),
 )
-def get_precise_response(messages, model="gpt-3.5-turbo-0125", temperature=0.2, top_p=0.1):
+def get_precise_response(messages, model="gpt-4o-2024-08-06", temperature=0.2, top_p=0.1):
     message = openai_client.chat.completions.create(
         model=model,
         messages=messages,
@@ -45,7 +45,7 @@ def get_precise_response(messages, model="gpt-3.5-turbo-0125", temperature=0.2, 
     ),
 )
 def get_chatbot_response(
-    messages, model="gpt-3.5-turbo-0125", temperature=0.7, top_p=0.8, max_tokens=100
+    messages, model="gpt-4o-2024-08-06", temperature=0.7, top_p=0.8, max_tokens=100
 ):
     message = openai_client.chat.completions.create(
         model=model,
@@ -67,7 +67,7 @@ def get_chatbot_response(
         openai.APIStatusError,
     ),
 )
-def get_json_response(messages, model="gpt-3.5-turbo-0125", temperature=0.2, top_p=0.1):
+def get_json_response(messages, model="gpt-4o-2024-08-06", temperature=0.2, top_p=0.1):
     message = openai_client.chat.completions.create(
         model=model,
         messages=messages,
