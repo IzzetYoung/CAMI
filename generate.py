@@ -74,7 +74,7 @@ if __name__ == "__main__":
             env = Env(
                 client=client,
                 counselor=counselor,
-                output_file=f"./Output/Sample-{i}-Round-{j}.txt",
+                output_file=f"{args.output_dir}/Sample-{i}-Round-{j}.txt",
                 max_turns=args.max_turns,
             )
             env.interact()
