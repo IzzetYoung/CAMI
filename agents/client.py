@@ -922,7 +922,7 @@ Is there a question in the last utterance of Counselor? Yes or No"""
         persona = random.choice(personas)
         if action == "Hesitate":
             personas.pop(personas.index(persona))
-        return response
+        return persona
 
     def receive(self, response):
         self.context.append(response)
