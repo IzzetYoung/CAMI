@@ -606,13 +606,13 @@ The client acknowledges that there are other ways to unwind, such as going for a
             json_content = re.search(r"\{[^}]+\}", response).group()
             topic_distribution = eval(json_content)
             topic = max(topic_distribution, key=topic_distribution.get)
+            if topic_distribution[topic] > 0.5 or len(self.conversation) > 10:
+                self.topic_stack.append(topic)
+                self.initialized = True
         except SyntaxError:
             topic = random.choice(
                 ["Health", "Economy", "Interpersonal Relationships", "Law", "Education"]
             )
-        if topic_distribution[topic] > 0.5 or len(self.conversation) > 10:
-            self.topic_stack.append(topic)
-            self.initialized = True
         return analysis, "Switch", topic
 
     def explore(self):
@@ -894,6 +894,7 @@ Please analyze the client's feedback toward the current situation and then choos
                 self.topic_stack.pop()
                 self.topic_stack.append(topic)
                 return analysis, action, topic
+        return analysis, "Stay", self.explored_topics[-1]
 
     def refine(self, context, response, strategy, topic):
         feedback_prompt = """Please analyze and provide feedback to help refine the counselor's response within the context of the conversation, focusing on how explicitly the response reflects the specified topic, and how consistently the response follows the given strategy.
