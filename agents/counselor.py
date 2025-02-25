@@ -900,7 +900,7 @@ Please analyze the client's feedback toward the current situation and then choos
         feedback_prompt = """Please analyze and provide feedback to help refine the counselor's response within the context of the conversation, focusing on how explicitly the response reflects the specified topic, and how consistently the response follows the given strategy.
 
 ### Task:
-Assess how well the client's response aligns with the specific topic and follows the given strategy. Assign a detailed score based on the following criteria, and provide specific feedback corresponding to each part:
+Assess how well the counselor's response aligns with the specific topic and follows the given strategy. Assign a detailed score based on the following criteria, and provide specific feedback corresponding to each part:
 - Alignment with Topic (0-5 points): To what extent does the response reflect the specific topic provided?
     - Feedback: [Provide specific feedback on how well the response aligns with the given topic, and suggest improvements if necessary.]
     - Score: X/5
@@ -928,52 +928,19 @@ Based on the feedback above, offer concrete recommendations to improve the respo
 
 ### Evaluation and Feedback
 #### Alignment with Topic
-**Feedback**: The client's response does not adequately reflect the specified topic of Physical Fitness. While they mention wanting to feel good in social settings and focusing on positive aspects like mood boost and less stress, there is no connection made to how reducing alcohol consumption could improve their physical fitness, endurance, or overall health. The response remains centered on emotional well-being without addressing the physical benefits outlined in the topic.
+**Feedback**: The counselor’s response connects reducing alcohol to physical fitness by mentioning endurance and strength, which aligns with the topic. However, the link could be more explicit. The response does not elaborate on how alcohol negatively impacts fitness (e.g., impaired muscle recovery, reduced energy, disrupted sleep) or how cutting back directly improves overall health and energy levels. The client’s prior focus on emotional well-being and stress reduction could also be bridged to physical fitness (e.g., explaining that better fitness supports mood and stress management).
 **Score**: 3/5
 
 #### Adherence to Strategy
-**Feedback**: The client's response does not effectively follow the Reframe strategy. Instead of reframing the act of cutting back on alcohol in terms of improving physical fitness, the client continues to focus on emotional aspects such as mood enhancement and stress reduction. The intended strategy to place the behavior change in a new light related to physical health is not achieved.
-**Score**: 2/5
-
-Total Score: 5/10
-
-### Suggestions for Refinement
-- Align with the Physical Fitness Topic: The client should explicitly connect reducing alcohol consumption to improvements in physical fitness. This could include mentioning how less alcohol can lead to better endurance, strength, or overall health.
-- Properly Apply the Reframe Strategy: Instead of focusing solely on emotional benefits, the client should reframe the behavior change by highlighting physical advantages. For example, they could discuss how cutting back on alcohol will enhance their ability to engage in physical activities they enjoy.
-- Provide Specific Physical Benefits: Mention concrete physical improvements that can result from reducing alcohol intake, such as increased energy levels for workouts, better muscle recovery, or improved cardiovascular health.
-- Integrate Fitness Goals into the Response: Incorporate specific fitness-related goals or activities that would benefit from reduced alcohol consumption. This makes the connection between the behavior change and the topic more explicit.
-
-### Context
-- Counselor: It sounds like drinking plays a social role for you, helping you connect and unwind with friends. At the same time, I wonder if you’ve considered how reducing alcohol could enhance your energy and overall quality of life, especially with the demands of work and family.
-- Client: I’ve thought about cutting back, but it just feels like another thing on my to-do list. I’m not sure if I want to give up that escape. It helps me relax after a long day, but maybe there is something deeper I need to figure out.
-- Counselor: It sounds like you're using alcohol to relax, which is understandable. What if we viewed your tiredness and stress as signals from your body? Maybe these feelings are nudging you to explore healthier ways to unwind, which could ultimately lift your mood and improve your well-being.
-- Client: I get that. With my glucose levels and blood pressure, I know I should be more mindful. But it's hard to shift my routine when I just want to unwind without thinking too much about my health. Sometimes, the stress feels overwhelming, and drinking helps me forget for a bit.
-
-### Counselor's Response
-- Counselor: It sounds like drinking helps you feel better momentarily, but what if we saw that tiredness as your body’s way of asking for better care? Reducing alcohol could actually open up new avenues for fitness, boosting your energy and resilience in the long run.
-
-### Given Topic
-- Health Care: You can explore how client's behavior impacts their health, leading to potential health issues. You can also discuss the benefits of counseling goal, which can improve overall quality of life and promote better health outcomes.
-
-### Strategy Used
-- Reframe: Suggest a different meaning for an experience expressed by the client, placing it in a new light. For example, 'Maybe this setback is actually a sign that you're ready for change.'
-
-### Evaluation and Feedback
-#### Alignment with Topic
-**Feedback**: The client's response strongly aligns with the specified topic of Health Care. They explicitly mention their glucose levels and blood pressure, indicating awareness of their health metrics. By acknowledging that they should be more mindful of their health, the client directly connects their alcohol consumption to potential health concerns. Additionally, the client recognizes that drinking helps them manage stress and unwind, which ties into how their behavior impacts their overall health and well-being. This comprehensive acknowledgment effectively reflects the topic of health and its relation to their behavior.
+**Feedback**: The counselor uses the Reframe strategy by presenting reduced alcohol consumption as a pathway to fitness gains. However, the reframe feels slightly disconnected from the client’s immediate focus on emotional well-being and social connection. To strengthen adherence, the counselor could tie physical fitness benefits (e.g., increased energy, better sleep) to the client’s stated goals of feeling present and reducing stress, creating a more cohesive narrative.
 **Score**: 4/5
 
-#### Adherence to Strategy
-**Feedback**: The client's response effectively follows the Reframe strategy. Initially, they express the difficulty of changing their routine despite understanding the health implications, which sets the stage for reframing. By stating, "drinking helps me forget for a bit," the client acknowledges the immediate relief alcohol provides, which allows the counselor to reframe this behavior as a temporary escape from stress. This sets up the counselor to suggest healthier ways to manage stress that can lead to better health outcomes. The client's openness to the idea that there might be "something deeper" they need to figure out further supports the reframing by highlighting an underlying issue that can be addressed through healthier behaviors.
-**Score**: 5/5
-
-Total Score: 9/10
+Total Score: 7/10
 
 ### Suggestions for Refinement
-- Expand on Health Concerns: The client could provide more details about how their glucose levels and blood pressure affect their daily life. This would deepen the connection between their behavior and health outcomes.
-- Express Motivation for Change: Sharing specific motivations or goals related to their health can strengthen their commitment to reducing alcohol consumption.
-- Identify Alternative Coping Mechanisms: Mentioning other strategies they might be interested in exploring to manage stress can show a proactive approach to change.
-- Acknowledge Challenges: Recognizing the challenges they face in making this change can make their commitment appear more realistic and grounded.
+- Enhance Topic Alignment: Explicitly state how alcohol impacts physical fitness (e.g., “Alcohol can dehydrate you, disrupt sleep, and slow muscle recovery, which might leave you feeling drained during workouts or social activities”). Link fitness improvements to the client’s goals: “Better endurance could help you stay energized during active outings with friends, and improved sleep from cutting back might boost your mood even more.”
+- Strengthen Reframe Strategy: Connect fitness to the client’s emotional priorities: “You mentioned wanting a mood boost—regular exercise, which becomes easier with less alcohol, is proven to reduce stress and increase endorphins. This could make your social time even more fulfilling.” Use a transitional phrase to bridge topics: “Since you value feeling present and reducing stress, another benefit of cutting back could be improving your physical fitness, which actually supports those goals by…”
+
 
 ### Context
 - [@context]
@@ -1011,61 +978,23 @@ Total Score: 9/10
 
 ### Evaluation and Feedback
 #### Alignment with Topic
-**Feedback**: The client's response does not adequately reflect the specified topic of Physical Fitness. While they mention wanting to feel good in social settings and focusing on positive aspects like mood boost and less stress, there is no connection made to how reducing alcohol consumption could improve their physical fitness, endurance, or overall health. The response remains centered on emotional well-being without addressing the physical benefits outlined in the topic.
+**Feedback**: The counselor’s response connects reducing alcohol to physical fitness by mentioning endurance and strength, which aligns with the topic. However, the link could be more explicit. The response does not elaborate on how alcohol negatively impacts fitness (e.g., impaired muscle recovery, reduced energy, disrupted sleep) or how cutting back directly improves overall health and energy levels. The client’s prior focus on emotional well-being and stress reduction could also be bridged to physical fitness (e.g., explaining that better fitness supports mood and stress management).
 **Score**: 3/5
 
 #### Adherence to Strategy
-**Feedback**: The client's response does not effectively follow the Reframe strategy. Instead of reframing the act of cutting back on alcohol in terms of improving physical fitness, the client continues to focus on emotional aspects such as mood enhancement and stress reduction. The intended strategy to place the behavior change in a new light related to physical health is not achieved.
-**Score**: 2/5
+**Feedback**: The counselor uses the Reframe strategy by presenting reduced alcohol consumption as a pathway to fitness gains. However, the reframe feels slightly disconnected from the client’s immediate focus on emotional well-being and social connection. To strengthen adherence, the counselor could tie physical fitness benefits (e.g., increased energy, better sleep) to the client’s stated goals of feeling present and reducing stress, creating a more cohesive narrative.
+**Score**: 4/5
 
-Total Score: 5/10
+Total Score: 7/10
 
 ### Suggestions for Refinement
-- Align with the Physical Fitness Topic: The client should explicitly connect reducing alcohol consumption to improvements in physical fitness. This could include mentioning how less alcohol can lead to better endurance, strength, or overall health.
-- Properly Apply the Reframe Strategy: Instead of focusing solely on emotional benefits, the client should reframe the behavior change by highlighting physical advantages. For example, they could discuss how cutting back on alcohol will enhance their ability to engage in physical activities they enjoy.
-- Provide Specific Physical Benefits: Mention concrete physical improvements that can result from reducing alcohol intake, such as increased energy levels for workouts, better muscle recovery, or improved cardiovascular health.
-- Integrate Fitness Goals into the Response: Incorporate specific fitness-related goals or activities that would benefit from reduced alcohol consumption. This makes the connection between the behavior change and the topic more explicit.
+- Enhance Topic Alignment: Explicitly state how alcohol impacts physical fitness (e.g., “Alcohol can dehydrate you, disrupt sleep, and slow muscle recovery, which might leave you feeling drained during workouts or social activities”). Link fitness improvements to the client’s goals: “Better endurance could help you stay energized during active outings with friends, and improved sleep from cutting back might boost your mood even more.”
+- Strengthen Reframe Strategy: Connect fitness to the client’s emotional priorities: “You mentioned wanting a mood boost—regular exercise, which becomes easier with less alcohol, is proven to reduce stress and increase endorphins. This could make your social time even more fulfilling.” Use a transitional phrase to bridge topics: “Since you value feeling present and reducing stress, another benefit of cutting back could be improving your physical fitness, which actually supports those goals by…”
 
 Please limit the word count to no more than 50 words!!!
 
 ### Refined Response
-- Counselor: It sounds like you want to enhance your social experiences. What if reducing alcohol could improve your physical fitness? Drinking less might give you more energy and strength for activities like hiking or exercising, making your outings more enjoyable and fulfilling.
-
-### Context
-- Counselor: It sounds like you've found a way to cope with stress, but I’m curious—how do you think your use of weed impacts your energy levels or mood during the day? Have you noticed any changes in your ability to manage your responsibilities?
-- Client: I guess it varies. Some days I feel fine, and other days are just busier than usual. Life’s a whirlwind, right? Sometimes I think about picking up a new hobby or spending more time outdoors—just find ways to enjoy life amidst all the chaos.
-- Counselor: It sounds like finding ways to enjoy life amidst the chaos is important to you. Reflecting on that desire, have you noticed how your interactions, especially with family, might change if you explored those hobbies or reduced your weed use a bit? It could create more space for connection.
-- Client: Yeah, I guess if I focused more on hobbies, I’d probably connect better with my family. But honestly, with everything going on, it’s hard to see how cutting back would help. Work and other stuff just take up so much time and energy.
-
-### Original Counselor's Response
-- Counselor: It sounds like your busy life is a sign of how much you value your family. Maybe seeing how your drug use impacts those connections could be an opportunity to strengthen those relationships. Exploring hobbies might just bring you closer together during these chaotic times.
-
-### Given Topic
-- Family: You can explore how client's behavior affects family relationships, leading to potential strain or distance. You can also discuss how counseling goal strengthens family connections and fosters a healthier dynamic.
-
-### Strategy Used
-- Raise Concern: Express concern about the client's behavior and its impact on their well-being, relationships, or goals. For example, 'I'm worried about how this might affect your health in the long run.'
-
-### Evaluation and Feedback
-#### Alignment with Topic
-**Feedback**: The counselor's response touches on the Family topic by linking the client's busy life to their value for family and suggesting that drug use impacts family connections. However, the connection is somewhat superficial and lacks depth. The response does not delve deeply into how the client's behavior has caused strain or distance within the family or provide specific examples. Therefore, while the response mentions family, it does not fully explore the negative impacts or discuss how the counseling goal can strengthen family connections in detail.
-**Score**: 3/5
-
-#### Adherence to Strategy
-**Feedback**: The counselor employs the Raise Concern strategy by expressing that the client's drug use impacts family connections and presents it as an opportunity to strengthen relationships. However, the expression of concern is mild and could be more direct. The counselor could have more explicitly conveyed worry or concern about the negative effects on family relationships, thereby making the concern more pronounced.
-**Score**: 3/5
-
-Total Score: 6/10
-
-### Suggestions for Refinement
-- Deepen the Connection to Family: The counselor should more explicitly discuss how the client's drug use has negatively affected family relationships, providing specific examples or scenarios.
-- Express Stronger Concern: The counselor should more clearly convey concern about the client's well-being and relationships.
-- Highlight Specific Benefits of Change: Emphasize how reducing drug use can directly improve family relationships and overall family dynamics.
-
-Please limit the word count to no more than 50 words!!!
-
-### Refined Response
-- Counselor: I'm worried that your drinking might be causing tension with your family, like when you missed last week's dinner. Reducing alcohol could help rebuild those relationships and create a more supportive and harmonious home environment.
+- Counselor: It’s inspiring that you’re focusing on mood and connection! What if we also viewed cutting back on alcohol as a way to boost your physical fitness? For example, better hydration and sleep from drinking less could improve your energy levels, making it easier to enjoy active outings.
 
 ### Context
 - [@context]

@@ -34,8 +34,8 @@ if __name__ == "__main__":
     for j in range(args.round):
         for i in tqdm(range(len(lines)), desc=f"Round-{j}"):
             sample = json.loads(lines[i])
-            if os.path.exists(f"./Output/Sample-{i}-Round-{j}.txt"):
-                with open(f"./Output/Sample-{i}-Round-{j}.txt") as f:
+            if os.path.exists(f"./{args.output_dir}/Sample-{i}-Round-{j}.txt"):
+                with open(f"./{args.output_dir}/Sample-{i}-Round-{j}.txt") as f:
                     temp_lines = f.readlines()
                     if (
                         len(temp_lines) > 40
