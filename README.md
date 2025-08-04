@@ -1,9 +1,9 @@
 # CAMI: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration
-Official Implementation of Motivational Interviewing Counselor Agent for Paper [CAMI: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration]().
+Official Implementation of Motivational Interviewing Counselor Agent for Paper [CAMI: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration](https://aclanthology.org/2025.acl-long.1024/).
 
 ## Introduction
 
-**[CAMI: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration]()** 
+**[CAMI: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration](https://aclanthology.org/2025.acl-long.1024/)** 
 </br>
 Yizhe Yang<sup>1</sup>,
 Palakorn Achananuparp<sup>2</sup>,
