@@ -180,7 +180,30 @@ Furthermore, based on our experiment, we have observed that the topic perception
 Additionally, we utilize the Dijkstra algorithm to calculate the distance between the current session topic and the motivation topic. To enhance the accuracy of the distance estimation and engagement adjustment, we assign different values to the edges between different levels of the topic hierarchy. For instance, the distance between two superclass topics is set to 3, while the distance between a superclass topic and a coarse-grained topic under it is set to 2.
 
 
-## TODO
-- [ ] Upload the citation information
-
+## Citation
+```
+@inproceedings{yang-etal-2025-cami,
+    title = "{CAMI}: A Counselor Agent Supporting Motivational Interviewing through State Inference and Topic Exploration",
+    author = "Yang, Yizhe  and
+      Achananuparp, Palakorn  and
+      Huang, Heyan  and
+      Jiang, Jing  and
+      Kit, Phey Ling  and
+      Lim, Nicholas Gabriel  and
+      Ern, Cameron Tan Shi  and
+      Lim, Ee-Peng",
+    editor = "Che, Wanxiang  and
+      Nabende, Joyce  and
+      Shutova, Ekaterina  and
+      Pilehvar, Mohammad Taher",
+    booktitle = "Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2025",
+    address = "Vienna, Austria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.acl-long.1024/",
+    pages = "21037--21081",
+    ISBN = "979-8-89176-251-0",
+}
+```
 
